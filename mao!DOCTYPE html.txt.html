@@ -1,0 +1,3233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测测你宠物的MBTI | 星瞳测测</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* === 基础样式和品牌色彩系统 === */
+        :root {
+            --primary-gradient: linear-gradient(to bottom, #E6E6FA, #FFFFFF);
+            --accent-color: #191970;
+            --highlight-gold: #FFD700;
+            --highlight-purple: #4B0082;
+            --glass-effect: rgba(255, 255, 255, 0.25);
+            --shadow-light: rgba(230, 230, 250, 0.3);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* === 紫色星空背景效果 === */
+        .stars-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(to bottom, #1a0a2a, #2d1b4a, #1a0a2a);
+        }
+        
+        .star {
+            position: absolute;
+            background-color: #E6E6FA;
+            border-radius: 50%;
+            animation: twinkle 3s infinite alternate;
+        }
+        
+        .star-large {
+            width: 3px;
+            height: 3px;
+            box-shadow: 0 0 10px 2px rgba(230, 230, 250, 0.8);
+        }
+        
+        .star-medium {
+            width: 2px;
+            height: 2px;
+            box-shadow: 0 0 6px 1px rgba(230, 230, 250, 0.6);
+        }
+        
+        .star-small {
+            width: 1px;
+            height: 1px;
+            box-shadow: 0 0 4px 1px rgba(230, 230, 250, 0.4);
+        }
+        
+        .constellation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(230, 230, 250, 0.1) 1px, transparent 2px),
+                radial-gradient(circle at 80% 70%, rgba(230, 230, 250, 0.1) 1px, transparent 2px),
+                radial-gradient(circle at 40% 80%, rgba(230, 230, 250, 0.1) 1px, transparent 2px);
+            background-size: 300px 300px, 400px 400px, 500px 500px;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.3; transform: scale(1); }
+        }
+        
+        /* === 水晶球质感元素 === */
+        .crystal-ball {
+            background: var(--glass-effect);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 0 20px rgba(255, 255, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .crystal-ball::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), transparent 70%);
+            z-index: -1;
+        }
+        
+        /* === 品牌标题 === */
+        .brand-title {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .brand-title h1 {
+            color: var(--accent-color);
+            font-size: 36px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .brand-title .subtitle {
+            color: var(--highlight-purple);
+            font-size: 16px;
+            font-weight: 300;
+        }
+        
+        .brand-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--highlight-gold), transparent);
+            margin: 15px auto 0;
+        }
+        
+        /* === 宠物选择页 === */
+        .pet-selection {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .pet-option {
+            width: 160px;
+            height: 160px;
+            border-radius: 20px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .pet-option:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.15);
+        }
+        
+        .pet-option.active {
+            border: 3px solid var(--highlight-gold);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        
+        .pet-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+        
+        .pet-name {
+            font-weight: bold;
+            color: var(--accent-color);
+            font-size: 16px;
+        }
+        
+        /* === 测试卡片 === */
+        .quiz-card {
+            background-color: white;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px var(--shadow-light);
+            padding: 40px;
+            margin: 20px auto;
+            max-width: 800px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        .quiz-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(to right, var(--highlight-purple), var(--highlight-gold));
+            border-radius: 30px 30px 0 0;
+        }
+        
+        /* === 进度指示器 === */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(230, 230, 250, 0.3);
+            border-radius: 4px;
+            margin: 20px 0 40px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--highlight-purple), var(--accent-color));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .progress-text {
+            text-align: center;
+            color: var(--accent-color);
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        /* === 问题样式 === */
+        .question-container {
+            margin-bottom: 30px;
+        }
+        
+        .question-text {
+            font-size: 22px;
+            color: var(--accent-color);
+            line-height: 1.5;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        
+        /* 提示语样式 */
+        .test-instructions {
+            background: rgba(230, 230, 250, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--highlight-gold);
+            font-size: 16px;
+            color: var(--accent-color);
+            line-height: 1.6;
+        }
+        
+        /* === 选项样式 === */
+        .options-container {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .option-item {
+            background: white;
+            border-radius: 20px;
+            padding: 18px 25px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid rgba(230, 230, 250, 0.5);
+            position: relative;
+            overflow: hidden;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .option-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(230, 230, 250, 0.1), rgba(255, 255, 255, 0.3));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .option-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            border-color: var(--accent-color);
+        }
+        
+        .option-item:hover::before {
+            opacity: 1;
+        }
+        
+        .option-item.selected {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 20px rgba(230, 230, 250, 0.7);
+            background: rgba(230, 230, 250, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .option-item.selected::after {
+            content: '✓';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        /* === 按钮样式 === */
+        .btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(25, 25, 112, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background: #2a2a8a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(25, 25, 112, 0.3);
+        }
+        
+        .btn-gold {
+            background: var(--highlight-gold);
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+        }
+        
+        .btn-large {
+            padding: 18px 50px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        /* === 结果徽章 === */
+        .result-badge {
+            width: 320px;
+            height: 320px;
+            margin: 0 auto 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .result-icon {
+            width: 240px;
+            height: 240px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .result-name {
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 5px;
+        }
+        
+        .result-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .result-type {
+            font-size: 28px;
+            color: var(--highlight-purple);
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, var(--highlight-purple), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* === 页面布局 === */
+        .page {
+            display: none;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        h1, h2, h3 {
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            text-align: center;
+        }
+        
+        h2 {
+            font-size: 22px;
+            margin: 25px 0 15px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--highlight-gold);
+        }
+        
+        p {
+            line-height: 1.7;
+            margin-bottom: 15px;
+            color: #444;
+        }
+        
+        /* === 结果内容区域 === */
+        .result-content {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .friend-perspective {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(75, 0, 130, 0.05));
+            border-left: 4px solid var(--highlight-gold);
+            margin-top: 20px;
+        }
+        
+        /* === 平衡指南特殊设计 === */
+        .balance-guide {
+            background: linear-gradient(135deg, rgba(230, 230, 250, 0.2), rgba(255, 255, 255, 0.8));
+            border-radius: 20px;
+            padding: 30px;
+            margin: 40px 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .balance-guide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(to right, var(--highlight-purple), var(--accent-color), var(--highlight-gold));
+        }
+        
+        .balance-guide h2 {
+            text-align: center;
+            color: var(--accent-color);
+            margin-bottom: 25px;
+        }
+        
+        .guide-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .guide-step {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: var(--transition);
+        }
+        
+        .guide-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        /* === 品牌脚注 === */
+        .brand-footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(230, 230, 250, 0.5);
+            color: var(--accent-color);
+            font-size: 14px;
+        }
+        
+        .brand-footer .icon {
+            font-size: 18px;
+            margin: 0 5px;
+        }
+        
+        /* === 响应式调整 === */
+        @media (max-width: 768px) {
+            .quiz-card {
+                margin: 10px;
+                padding: 25px;
+                border-radius: 20px;
+            }
+            
+            .question-text {
+                font-size: 20px;
+            }
+            
+            .result-section {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .btn-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .guide-steps {
+                grid-template-columns: 1fr;
+            }
+            
+            .result-badge {
+                width: 280px;
+                height: 280px;
+            }
+            
+            .result-icon {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .result-name {
+                font-size: 32px;
+            }
+            
+            .result-type {
+                font-size: 24px;
+            }
+            
+            .pet-option {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .pet-icon {
+                font-size: 40px;
+            }
+        }
+        
+        /* === 加载动画 === */
+        .loading-dots {
+            display: inline-flex;
+            gap: 5px;
+        }
+        
+        .loading-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        
+        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { 
+                transform: scale(0);
+            } 40% { 
+                transform: scale(1.0);
+            }
+        }
+        
+        /* === 结果页面整体优化 === */
+        .results-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(230,230,250,0.3));
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* === 宠物特定颜色 === */
+        .dog-color { color: #FF6B6B; }
+        .hamster-color { color: #4ECDC4; }
+        .bird-color { color: #45B7D1; }
+        .snake-color { color: #96CEB4; }
+        .cat-color { color: #FFA500; }
+        .rabbit-color { color: #DDA0DD; }
+    </style>
+</head>
+<body>
+    <!-- 紫色星空背景 -->
+    <div class="stars-bg" id="starsBg">
+        <div class="constellation"></div>
+    </div>
+    
+    <!-- 宠物选择页 -->
+    <div class="page active" id="petSelectionPage">
+        <div class="quiz-card">
+            <div class="brand-title">
+                <h1>测测你宠物的MBTI</h1>
+                <div class="subtitle">探索你家毛孩子的性格密码</div>
+            </div>
+            
+            <div class="pet-selection">
+                <div class="pet-option" data-pet="dog">
+                    <div class="pet-icon">🐶</div>
+                    <div class="pet-name">狗勾爱好者</div>
+                </div>
+                <div class="pet-option" data-pet="hamster">
+                    <div class="pet-icon">🐹</div>
+                    <div class="pet-name">仓鼠铲屎官</div>
+                </div>
+                <div class="pet-option" data-pet="bird">
+                    <div class="pet-icon">🐦</div>
+                    <div class="pet-name">鹦鹉/小鸟家长</div>
+                </div>
+                <div class="pet-option" data-pet="snake">
+                    <div class="pet-icon">🐍</div>
+                    <div class="pet-name">守宫/蛇蛇饲养员</div>
+                </div>
+                <!-- 新增猫猫和兔子选项 -->
+                <div class="pet-option" data-pet="cat">
+                    <div class="pet-icon">🐱</div>
+                    <div class="pet-name">猫猫铲屎官</div>
+                </div>
+                <div class="pet-option" data-pet="rabbit">
+                    <div class="pet-icon">🐰</div>
+                    <div class="pet-name">兔兔饲养员</div>
+                </div>
+            </div>
+            
+            <div class="btn-container">
+                <button class="btn btn-large" id="startTest">开始测试</button>
+            </div>
+            
+            <!-- 品牌脚注 -->
+            <div class="brand-footer">
+                <span class="icon">🐾</span> 本测试由「星瞳测测」精心设计，探索毛孩子性格，从了解开始 <span class="icon">🐾</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 答题页 -->
+    <div class="page" id="quizPage">
+        <div class="quiz-card">
+            <div class="brand-title">
+                <h1 id="quizTitle">宠物专属MBTI测试</h1>
+                <div class="subtitle">探索你家宠物的性格密码</div>
+            </div>
+            
+            <div class="test-instructions">
+                <strong>测试说明：</strong> 请根据你平时对自家宠物的观察，从A、B、C三个选项中选择最符合它日常习惯的一项。有些选项可能都不完全吻合，请选择最接近的那个。
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0/20</div>
+            
+            <div class="question-container">
+                <div class="question-text" id="questionText">问题加载中<span class="loading-dots"><span></span><span></span><span></span></span></div>
+                
+                <div class="options-container" id="optionsContainer">
+                    <!-- 选项将通过JavaScript动态生成 -->
+                </div>
+            </div>
+            
+            <div class="btn-container">
+                <button class="btn btn-outline" id="prevQuestion">上一题</button>
+                <button class="btn btn-outline" id="backToPetSelection">返回选择宠物</button>
+                <div id="questionCounter">第 <span id="currentQuestion">1</span> 题 / 共 20 题</div>
+            </div>
+            
+            <!-- 品牌脚注 -->
+            <div class="brand-footer">
+                <span class="icon">🐾</span> 本测试由「星瞳测测」精心设计，探索毛孩子性格，从了解开始 <span class="icon">🐾</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 结果页 -->
+    <div class="page" id="resultPage">
+        <div class="quiz-card">
+            <div class="brand-title">
+                <h1 id="resultTitle">你的宠物MBTI性格分析</h1>
+                <div class="subtitle">发现毛孩子的性格密码</div>
+            </div>
+            
+            <div class="results-container">
+                <!-- 宠物MBTI结果部分 -->
+                <div class="result-card">
+                    <div class="result-section">
+                        <div class="result-type" id="petMbtiType">宠物MBTI类型</div>
+                        <div class="result-badge crystal-ball">
+                            <img class="result-icon" id="petResultImg" src="https://placehold.co/300x300/4B0082/FFFFFF?text=宠物MBTI" alt="宠物MBTI类型">
+                        </div>
+                        <div class="result-name" id="petResultName">宠物性格类型</div>
+                        
+                        <div class="result-content">
+                            <h2>性格分析</h2>
+                            <p id="petResultAnalysis"></p>
+                        </div>
+                        
+                        <div class="result-content friend-perspective">
+                            <h2>与其他宠物相处</h2>
+                            <p id="petInteraction"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 平衡指南 -->
+            <div class="balance-guide">
+                <h2>相处与训练指南</h2>
+                <div class="guide-steps" id="balanceGuide">
+                    <!-- 平衡指南内容将通过JavaScript动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 温情结语 -->
+            <div class="result-content friend-perspective">
+                <h2 id="warmConclusionTitle">致宠物主人</h2>
+                <p id="warmConclusion"></p>
+            </div>
+            
+            <!-- 按钮区域 -->
+            <div class="btn-container">
+                <button class="btn btn-large" id="restartTest">重新测试</button>
+                <a href="https://xhslink.com/m/1HpWUO6Yhkn" target="_blank" class="btn btn-gold">前往「星瞳测测」小红书店铺</a>
+            </div>
+            
+            <!-- 品牌脚注 -->
+            <div class="brand-footer">
+                <span class="icon">🐾</span> 本测试由「星瞳测测」精心设计，探索毛孩子性格，从了解开始 <span class="icon">🐾</span>
+            </div>
+            
+            <!-- 星轨ID -->
+            <div style="text-align: center; margin-top: 30px; font-family: monospace; color: var(--accent-color); font-size: 14px;">
+                🐾ID: <a href="https://xhslink.com/m/1HpWUO6Yhkn" target="_blank" style="color: var(--accent-color); text-decoration: underline;" id="starTrackId">ST-XXXX-XXXX</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === 生成紫色星空背景 ===
+        function createStars() {
+            const starsBg = document.getElementById('starsBg');
+            const starCount = 300;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                
+                // 随机大小分类
+                const sizeType = Math.random();
+                if (sizeType < 0.1) {
+                    star.className = 'star star-large';
+                } else if (sizeType < 0.4) {
+                    star.className = 'star star-medium';
+                } else {
+                    star.className = 'star star-small';
+                }
+                
+                // 随机位置
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // 随机动画延迟和持续时间
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                star.style.animationDuration = `${2 + Math.random() * 3}s`;
+                
+                starsBg.appendChild(star);
+            }
+        }
+        
+        // === 宠物测试题库 ===
+        const petQuestionBanks = {
+            // 狗狗题库 - 完整20题
+            dog: [
+                {
+                    text: "带它去狗公园，它会第一时间？",
+                    options: [
+                        "A. 冲向狗群，摇着尾巴开始社交。",
+                        "B. 紧贴你的腿，观察环境，慢慢融入。",
+                        "C. 自己跑去闻草坪，对别的狗兴趣不大。"
+                    ]
+                },
+                {
+                    text: "它如何表达对你的思念？（如你下班回家）",
+                    options: [
+                        "A. 全身扭动，疯狂摇尾，舔脸，毫不掩饰的狂喜。",
+                        "B. 兴奋地哼唧，叼来玩具给你，但不会过分扑跳。",
+                        "C. 摇两下尾巴，等你主动去抚摸它。"
+                    ]
+                },
+                {
+                    text: "学习新指令时，它的主要动力是？",
+                    options: [
+                        "A. 你夸张的表扬和抚摸。",
+                        "B. 它最爱的零食奖励。",
+                        "C. 学习本身带来的乐趣和挑战。"
+                    ]
+                },
+                {
+                    text: "遇到它不喜欢的事（如洗澡），它会？",
+                    options: [
+                        "A. 勉强配合，但眼神委屈，试图用舔手求饶。",
+                        "B. 奋力挣扎，明确表达'我不愿意'。",
+                        "C. 躲起来，或用身体语言（如飞机耳）强烈抗拒。"
+                    ]
+                },
+                {
+                    text: "它的日常作息规律吗？",
+                    options: [
+                        "A. 非常准，到点就叫你吃饭遛弯，是活体闹钟。",
+                        "B. 大体规律，但晚一点也没关系。",
+                        "C. 随遇而安，你给的时候它就吃。"
+                    ]
+                },
+                {
+                    text: "对于新买的玩具，它会？",
+                    options: [
+                        "A. 立刻叼起来玩，充满热情，但可能很快玩坏。",
+                        "B. 先谨慎闻一闻，确认安全后再开始玩。",
+                        "C. 没什么兴趣，除非你陪它一起玩。"
+                    ]
+                },
+                {
+                    text: "它如何看待你其他的家庭成员？",
+                    options: [
+                        "A. 都是它最爱的人，但对'遛它/喂它'的那位最热情。",
+                        "B. 有明确的等级观念，只听一个人的话。",
+                        "C. 一视同仁，谁陪它玩它就喜欢谁。"
+                    ]
+                },
+                {
+                    text: "在路上遇到陌生狗狗，它的反应是？",
+                    options: [
+                        "A. 摇尾示好，想上前互动。",
+                        "B. 停下观察，判断对方是友好还是有敌意。",
+                        "C. 低吼、吠叫或表现出警惕、害怕的样子。"
+                    ]
+                },
+                {
+                    text: "它破坏过家具或你的个人物品吗？",
+                    options: [
+                        "A. 只在分离焦虑或极度无聊时有过。",
+                        "B. 从不，是个天使宝宝。",
+                        "C. 经常，尤其喜欢咬有你气味的鞋子。"
+                    ]
+                },
+                {
+                    text: "它的玩耍风格更偏向？",
+                    options: [
+                        "A. 追逐和捡球类游戏。",
+                        "B. 拔河和力量型游戏。",
+                        "C. 嗅闻和寻找藏起来的美食/玩具。"
+                    ]
+                },
+                {
+                    text: "雷雨或烟花等巨大声响时，它会？",
+                    options: [
+                        "A. 非常害怕，寻求你的保护。",
+                        "B. 有点不安，但待在你身边就能平静。",
+                        "C. 毫无反应，照睡不误。"
+                    ]
+                },
+                {
+                    text: "它睡觉的姿势通常是？",
+                    options: [
+                        "A. 四脚朝天，露出肚皮，毫无防备。",
+                        "B. 蜷缩成一团，守护着自己。",
+                        "C. 各种奇怪的姿势，怎么舒服怎么来。"
+                    ]
+                },
+                {
+                    text: "你吃饭时，它会？",
+                    options: [
+                        "A. 用渴望的眼神凝视你，口水直流。",
+                        "B. 坐在你旁边，用头蹭你，暗示你给它一点。",
+                        "C. 不感兴趣，或者吃自己的狗粮去了。"
+                    ]
+                },
+                {
+                    text: "它对你的情绪反应是？",
+                    options: [
+                        "A. 非常敏感，你伤心时会过来安慰你。",
+                        "B. 能感觉到，但不会有过多的行动。",
+                        "C. 似乎沉浸在自己的世界里。"
+                    ]
+                },
+                {
+                    text: "出门遛弯时，谁主导路线？",
+                    options: [
+                        "A. 它主导，拉着你探索它感兴趣的地方。",
+                        "B. 你主导，它乖乖跟着。",
+                        "C. 互相配合，它闻它的，你走你的。"
+                    ]
+                },
+                {
+                    text: "它会'藏'东西吗？（比如骨头、玩具）",
+                    options: [
+                        "A. 会，在沙发底或院子里有它的'宝藏'。",
+                        "B. 不会，东西放在明处。",
+                        "C. 当场吃完/玩完，没有收藏习惯。"
+                    ]
+                },
+                {
+                    text: "它听指令的服从度如何？",
+                    options: [
+                        "A. 几乎每次都听，是听话的乖宝宝。",
+                        "B. 看心情，有奖励时听话。",
+                        "C. 选择性失聪，只听它想听的。"
+                    ]
+                },
+                {
+                    text: "它对小孩的态度是？",
+                    options: [
+                        "A. 耐心和宽容，是个好保姆。",
+                        "B. 敬而远之，避免接触。",
+                        "C. 过于兴奋，可能会扑倒小孩。"
+                    ]
+                },
+                {
+                    text: "它如何引起你的注意？",
+                    options: [
+                        "A. 用爪子扒你，或用鼻子拱你的手。",
+                        "B. 发出呜呜声或短促的吠叫。",
+                        "C. 直接把玩具或 leash 叼到你面前。"
+                    ]
+                },
+                {
+                    text: "总体而言，你觉得它的'狗生哲学'是？",
+                    options: [
+                        "A. '爱就要大声说出来！'",
+                        "B. '忠诚与守护是我的使命。'",
+                        "C. '开心最重要，活在当下！'"
+                    ]
+                }
+            ],
+            
+            // 仓鼠题库 - 完整20题
+            hamster: [
+                {
+                    text: "你靠近笼子时，它的第一反应是？",
+                    options: [
+                        "A. 兴奋地爬到笼边，以为有吃的。",
+                        "B. 暂停所有动作，警惕地观察你。",
+                        "C. 立刻躲进小窝或木屑深处。"
+                    ]
+                },
+                {
+                    text: "它的主要活动时间是？",
+                    options: [
+                        "A. 清晰的白天活动或夜晚活动。",
+                        "B. 黄昏和黎明最活跃。",
+                        "C. 全天不定时出来活动一下。"
+                    ]
+                },
+                {
+                    text: "它对于你放入的新玩具（跑轮除外）的态度是？",
+                    options: [
+                        "A. 立刻上前啃咬、探索。",
+                        "B. 观察很久才小心翼翼地去碰。",
+                        "C. 完全无视，只走自己熟悉的路线。"
+                    ]
+                },
+                {
+                    text: "它如何收集和储存食物？",
+                    options: [
+                        "A. 疯狂塞满颊囊，运回窝里囤积。",
+                        "B. 当场吃完，或者只藏一点点。",
+                        "C. 有固定的'粮仓'，分门别类。"
+                    ]
+                },
+                {
+                    text: "它在跑轮上的状态更像是？",
+                    options: [
+                        "A. 健身狂人，每晚跑很长距离。",
+                        "B. 偶尔上去跑跑，兴趣不大。",
+                        "C. 把跑轮当另一个睡觉的地方。"
+                    ]
+                },
+                {
+                    text: "你试图用手抚摸它时，它会？",
+                    options: [
+                        "A. 接受并可能爬上你的手。",
+                        "B. 嗅一嗅，然后走开。",
+                        "C. 受惊后跳开或发出吱吱叫声。"
+                    ]
+                },
+                {
+                    text: "它整理自己巢穴的频率是？",
+                    options: [
+                        "A. 非常频繁，总是把窝收拾得很整洁。",
+                        "B. 偶尔整理，看起来不乱就行。",
+                        "C. 非常随性，木屑和食物混在一起。"
+                    ]
+                },
+                {
+                    text: "它对突然的灯光或声音的反应是？",
+                    options: [
+                        "A. 吓得一激灵，迅速躲藏。",
+                        "B. 只是停顿一下，然后继续活动。",
+                        "C. 似乎没注意到，毫无反应。"
+                    ]
+                },
+                {
+                    text: "它洗澡（沙浴）的习惯是？",
+                    options: [
+                        "A. 非常爱干净，经常在浴沙里打滚。",
+                        "B. 你把它放进去，它才洗一下。",
+                        "C. 害怕沙浴，会立刻逃出来。"
+                    ]
+                },
+                {
+                    text: "你更换笼内布局后，它会？",
+                    options: [
+                        "A. 非常不安，紧张地到处探索重建认知。",
+                        "B. 把新布局当成新乐园兴奋探索。",
+                        "C. 花好几天才适应新的环境。"
+                    ]
+                },
+                {
+                    text: "它睡觉的姿势通常是？",
+                    options: [
+                        "A. 藏在窝里深处，蜷成一团。",
+                        "B. 有时在开放角落趴着睡。",
+                        "C. 各种奇怪的姿势，四脚朝天。"
+                    ]
+                },
+                {
+                    text: "它对你喂食的反应是？",
+                    options: [
+                        "A. 立刻冲过来拿走食物。",
+                        "B. 等你走开才过来吃。",
+                        "C. 慢悠悠地过来，不紧不慢。"
+                    ]
+                },
+                {
+                    text: "它啃咬笼子或磨牙棒的频率是？",
+                    options: [
+                        "A. 经常，是日常必备活动。",
+                        "B. 偶尔，磨牙棒兴趣不大。",
+                        "C. 几乎不啃咬。"
+                    ]
+                },
+                {
+                    text: "它在你手上时的状态是？",
+                    options: [
+                        "A. 好奇地探索你的手和手臂。",
+                        "B. 寻找机会往下跳，想逃跑。",
+                        "C. 安心地待着，甚至可能睡觉。"
+                    ]
+                },
+                {
+                    text: "它对待同类（如果同笼）的态度是？",
+                    options: [
+                        "A. 可以和平共处，甚至一起睡觉。",
+                        "B. 经常发生争吵和抢夺。",
+                        "C. 完全不能共存，必须分笼。"
+                    ]
+                },
+                {
+                    text: "它使用厕所（如果会定点）的情况？",
+                    options: [
+                        "A. 很爱干净，会在固定角落排泄。",
+                        "B. 比较随意，笼子各处都可能。",
+                        "C. 总是在睡窝附近排泄。"
+                    ]
+                },
+                {
+                    text: "它发出叫声的频率是？",
+                    options: [
+                        "A. 很少发出声音，是个安静的小家伙。",
+                        "B. 在受到惊吓或威胁时会吱吱叫。",
+                        "C. 有时会发出满足的磨牙声。"
+                    ]
+                },
+                {
+                    text: "你认为它的'鼠生哲学'是？",
+                    options: [
+                        "A. '广积粮，高筑墙，缓称王。'",
+                        "B. '人生得意须尽欢，莫使金樽空对月。'",
+                        "C. '安全第一，好奇心第二。'"
+                    ]
+                },
+                {
+                    text: "总体而言，你觉得它的性格核心是？",
+                    options: [
+                        "A. 勤劳的囤积者。",
+                        "B. 谨慎的生存家。",
+                        "C. 随性的享乐主义者。"
+                    ]
+                },
+                {
+                    text: "你与它的关系更像？",
+                    options: [
+                        "A. 它信任的'巨型投食官'。",
+                        "B. 它眼中的'环境的一部分'。",
+                        "C. 它需要警惕的'潜在危险'。"
+                    ]
+                }
+            ],
+            
+            // 鸟类题库 - 完整20题
+            bird: [
+                {
+                    text: "你回家时，它的反应是？",
+                    options: [
+                        "A. 发出响亮、欢快的鸣叫迎接你。",
+                        "B. 在栖杆上跳动，表现出兴奋。",
+                        "C. 安静地看着你，没什么特别反应。"
+                    ]
+                },
+                {
+                    text: "它鸣叫的主要目的是？",
+                    options: [
+                        "A. 心情愉悦，自顾自地'唱歌'。",
+                        "B. 看到你非常兴奋，在呼唤你。",
+                        "C. 受到惊吓或感到威胁的警报。"
+                    ]
+                },
+                {
+                    text: "它对你准备的玩具（铃铛、秋千等）态度是？",
+                    options: [
+                        "A. 非常有兴趣，会主动去啃咬、玩耍。",
+                        "B. 谨慎观察，很久才去碰一下。",
+                        "C. 害怕，会远离新玩具。"
+                    ]
+                },
+                {
+                    text: "它学习模仿声音或小技巧的能力？",
+                    options: [
+                        "A. 很强，很快就能学会。",
+                        "B. 一般，需要反复教导。",
+                        "C. 完全没兴趣，不愿学习。"
+                    ]
+                },
+                {
+                    text: "它对你的亲密程度如何？",
+                    options: [
+                        "A. 可以上手，接受抚摸，甚至躺手。",
+                        "B. 可以上手，但不喜欢被摸。",
+                        "C. 完全不能上手，会飞走。"
+                    ]
+                },
+                {
+                    text: "它在笼子里的活动模式是？",
+                    options: [
+                        "A. 非常活跃，在各个栖杆间跳跃飞舞。",
+                        "B. 有固定的活动路线，比较规律。",
+                        "C. 大部分时间安静地待在一个地方。"
+                    ]
+                },
+                {
+                    text: "它对笼外自由活动的态度是？",
+                    options: [
+                        "A. 非常渴望，会主动想出来。",
+                        "B. 你放它出来，它才小心地探索。",
+                        "C. 害怕出来，觉得笼子里最安全。"
+                    ]
+                },
+                {
+                    text: "它整理羽毛的频率是？",
+                    options: [
+                        "A. 非常频繁，是个爱干净的小家伙。",
+                        "B. 一般，看起来整洁即可。",
+                        "C. 需要你帮忙洗澡或梳理。"
+                    ]
+                },
+                {
+                    text: "它对你其他家庭成员的态度？",
+                    options: [
+                        "A. 只亲近你一个人，对别人很警惕。",
+                        "B. 对家人都比较友好。",
+                        "C. 害怕所有人，包括你。"
+                    ]
+                },
+                {
+                    text: "它对待食物的方式是？",
+                    options: [
+                        "A. 有偏好，会先把最爱吃的挑出来。",
+                        "B. 给什么吃什么，不挑食。",
+                        "C. 会把食物啄得到处都是。"
+                    ]
+                },
+                {
+                    text: "它看到陌生人时的反应是？",
+                    options: [
+                        "A. 发出警告性的叫声。",
+                        "B. 立刻安静下来，保持警惕。",
+                        "C. 反应激烈，在笼子里乱飞。"
+                    ]
+                },
+                {
+                    text: "它睡觉的姿势是？",
+                    options: [
+                        "A. 单脚站立，把头埋在背后羽毛里。",
+                        "B. 双脚站在栖杆上，缩成一团。",
+                        "C. 在窝里或角落趴着睡。"
+                    ]
+                },
+                {
+                    text: "它对你手机的铃声或电视声音的反应？",
+                    options: [
+                        "A. 会试图模仿。",
+                        "B. 感到好奇，侧耳倾听。",
+                        "C. 受到惊吓。"
+                    ]
+                },
+                {
+                    text: "它破坏家具或啃咬物品的程度？",
+                    options: [
+                        "A. 很喜欢啃咬木制品或数据线。",
+                        "B. 只啃咬你给的玩具和墨鱼骨。",
+                        "C. 几乎没有破坏行为。"
+                    ]
+                },
+                {
+                    text: "它如何表达不满或生气？",
+                    options: [
+                        "A. 发出尖锐的叫声。",
+                        "B. 用嘴啄你（不一定用力）。",
+                        "C. 背对着你，不理你。"
+                    ]
+                },
+                {
+                    text: "它对你的发型、眼镜等变化的反应？",
+                    options: [
+                        "A. 非常好奇，会凑过来看。",
+                        "B. 有点警惕，需要时间适应。",
+                        "C. 完全没注意到。"
+                    ]
+                },
+                {
+                    text: "你认为它的'鸟生信条'是？",
+                    options: [
+                        "A. '我的舞台，我的秀！'",
+                        "B. '陪伴是最长情的告白。'",
+                        "C. '自由高于一切。'"
+                    ]
+                },
+                {
+                    text: "总体而言，你觉得它的性格核心是？",
+                    options: [
+                        "A. 聪明活泼的表演家。",
+                        "B. 深情粘人的小伙伴。",
+                        "C. 热爱自由的独行侠。"
+                    ]
+                },
+                {
+                    text: "你与它的关系更像？",
+                    options: [
+                        "A. 亲密的伙伴/家人。",
+                        "B. 它信赖的栖息之所。",
+                        "C. 互相欣赏的室友。"
+                    ]
+                },
+                {
+                    text: "它最让你着迷的一点是？",
+                    options: [
+                        "A. 美妙的歌喉和灵性。",
+                        "B. 互动的热情与信任。",
+                        "C. 美丽的羽毛和优雅的姿态。"
+                    ]
+                }
+            ],
+            
+            // 蛇蛇题库 - 完整20题
+            snake: [
+                {
+                    text: "你打开饲养箱时，它的典型反应是？",
+                    options: [
+                        "A. 好奇地探出头，舌头频繁伸缩探索。",
+                        "B. 保持原有姿势，只是看着你。",
+                        "C. 迅速躲进躲避穴或垫材下。"
+                    ]
+                },
+                {
+                    text: "它在饲养箱内的活动时间主要是？",
+                    options: [
+                        "A. 清晰的白天或夜晚活动模式。",
+                        "B. 无明显规律，随时可能活动。",
+                        "C. 几乎不动，只有需要时才移动。"
+                    ]
+                },
+                {
+                    text: "你进行日常清理时，它会？",
+                    options: [
+                        "A. 趁机探索箱外，在你手臂上缓慢移动。",
+                        "B. 在你手里保持紧绷，随时准备缩回。",
+                        "C. 表现出紧张，试图逃跑或发出警告（如摇尾）。"
+                    ]
+                },
+                {
+                    text: "它对待你喂食（鼠类）的反应是？",
+                    options: [
+                        "A. 迅速锁定并主动捕食。",
+                        "B. 需要等待很久才谨慎地进食。",
+                        "C. 经常拒绝进食，尤其在你注视下。"
+                    ]
+                },
+                {
+                    text: "你尝试上手时，它的状态是？",
+                    options: [
+                        "A. 放松地在你手上/臂上蜿蜒移动。",
+                        "B. 肌肉紧绷，移动谨慎而缓慢。",
+                        "C. 完全无法上手，反应激烈。"
+                    ]
+                },
+                {
+                    text: "它最喜欢待在饲养箱的哪个位置？",
+                    options: [
+                        "A. 温度适宜的加热点上方。",
+                        "B. 凉爽区域的躲避穴里。",
+                        "C. 任何地方，随遇而安。"
+                    ]
+                },
+                {
+                    text: "它蜕皮期间的行为变化明显吗？",
+                    options: [
+                        "A. 非常明显，蒙眼、躲藏、拒食。",
+                        "B. 略有变化，但不影响正常活动。",
+                        "C. 几乎看不出变化，照常生活。"
+                    ]
+                },
+                {
+                    text: "它对饲养箱外的环境探索欲望是？",
+                    options: [
+                        "A. 很强，会主动向箱外爬。",
+                        "B. 一般，只在手上有限度地探索。",
+                        "C. 很弱，害怕箱外环境。"
+                    ]
+                },
+                {
+                    text: "它舌头伸缩的频率通常代表？",
+                    options: [
+                        "A. 在积极收集环境信息，状态放松。",
+                        "B. 感到紧张或受到威胁。",
+                        "C. 饥饿时会更频繁。"
+                    ]
+                },
+                {
+                    text: "它日常的姿势大多是？",
+                    options: [
+                        "A. 盘踞起来，头部微微抬起观察。",
+                        "B. 完全隐藏在躲避穴中。",
+                        "C. 舒展地趴在开放环境中。"
+                    ]
+                },
+                {
+                    text: "你更换饲养箱内布局后，它会？",
+                    options: [
+                        "A. 花很长时间重新探索每一个角落。",
+                        "B. 感到压力，躲起来好几天。",
+                        "C. 似乎没注意到，行为照旧。"
+                    ]
+                },
+                {
+                    text: "它对你的存在熟悉吗？（相较于陌生人）",
+                    options: [
+                        "A. 熟悉，在你面前更放松。",
+                        "B. 不熟悉，对所有人类一视同仁地警惕。",
+                        "C. 无法判断。"
+                    ]
+                },
+                {
+                    text: "你认为它的'蛇生信条'是？",
+                    options: [
+                        "A. '能量守恒，动一下亏一秒。'",
+                        "B. '世界是一场巨大的信息素谜题。'",
+                        "C. '安全第一，好奇第二。'"
+                    ]
+                },
+                {
+                    text: "它移动的速度通常是？",
+                    options: [
+                        "A. 从容不迫，平稳流畅。",
+                        "B. 迅速而急促，受惊时尤其快。",
+                        "C. 极其缓慢，几乎像静止。"
+                    ]
+                },
+                {
+                    text: "它给你带来的最主要感受是？",
+                    options: [
+                        "A. 宁静与神秘。",
+                        "B. 优雅与力量。",
+                        "C. 独立与疏离。"
+                    ]
+                },
+                {
+                    text: "你觉得它能'认识'你吗？",
+                    options: [
+                        "A. 能，它熟悉你的气味和 handling 方式。",
+                        "B. 不能，它只对温度和环境有反应。",
+                        "C. 不确定，但它似乎不害怕我。"
+                    ]
+                },
+                {
+                    text: "总体而言，你觉得它的性格核心是？",
+                    options: [
+                        "A. 淡定从容的哲学家。",
+                        "B. 敏感谨慎的观察家。",
+                        "C. 深藏不露的潜伏者。"
+                    ]
+                },
+                {
+                    text: "你与它的互动模式更接近？",
+                    options: [
+                        "A. 安静的观察与偶尔的上手接触。",
+                        "B. 纯粹的功能性喂养与欣赏。",
+                        "C. 相互适应的伙伴关系。"
+                    ]
+                },
+                {
+                    text: "它最吸引你的一点是？",
+                    options: [
+                        "A. 极简的生活美学与静谧的气质。",
+                        "B. 美丽独特的纹理与色彩。",
+                        "C. 独立不扰人的饲养体验。"
+                    ]
+                },
+                {
+                    text: "你如何看待你们之间的关系？",
+                    options: [
+                        "A. 我是它环境的提供者和安静的观察者。",
+                        "B. 我们是两个平行世界里的室友，互不打扰又彼此共存。",
+                        "C. 它是我一个独特而美丽的收藏。"
+                    ]
+                }
+            ],
+            
+            // 猫猫题库 - 新增完整20题
+            cat: [
+                {
+                    text: "你回家时，它的典型反应是？",
+                    options: [
+                        "A. 在门口迎接，蹭你的腿，发出咕噜声。",
+                        "B. 从远处看着你，等你主动过去。",
+                        "C. 继续睡觉或做自己的事，好像没看见你。"
+                    ]
+                },
+                {
+                    text: "它最喜欢的互动方式是？",
+                    options: [
+                        "A. 被抚摸和抱抱，特别是下巴和脸颊。",
+                        "B. 玩逗猫棒等互动玩具。",
+                        "C. 自己玩小球或纸团。"
+                    ]
+                },
+                {
+                    text: "它对陌生人的态度是？",
+                    options: [
+                        "A. 好奇地凑上去闻闻，可能要求抚摸。",
+                        "B. 保持距离观察，不轻易接近。",
+                        "C. 立刻躲起来，直到陌生人离开。"
+                    ]
+                },
+                {
+                    text: "它睡觉的位置通常是？",
+                    options: [
+                        "A. 你的床上或你常坐的沙发。",
+                        "B. 高处，如猫树顶层或柜子顶。",
+                        "C. 隐蔽的角落，如床底或纸箱里。"
+                    ]
+                },
+                {
+                    text: "它表达不满的方式是？",
+                    options: [
+                        "A. 用爪子轻轻拍你，或低声喵喵叫。",
+                        "B. 尾巴快速甩动，耳朵向后贴。",
+                        "C. 直接走开，不理你。"
+                    ]
+                },
+                {
+                    text: "它对食物的态度是？",
+                    options: [
+                        "A. 对食物很挑剔，只吃特定的品牌和口味。",
+                        "B. 给什么吃什么，不挑食。",
+                        "C. 吃得很快，好像怕被抢走。"
+                    ]
+                },
+                {
+                    text: "它使用猫砂盆的习惯是？",
+                    options: [
+                        "A. 非常讲究，用完立即埋好。",
+                        "B. 随意埋几下，不太在意。",
+                        "C. 有时会在猫砂盆外解决。"
+                    ]
+                },
+                {
+                    text: "它对其他动物的态度是？",
+                    options: [
+                        "A. 好奇想交朋友，主动接近。",
+                        "B. 警惕但保持距离，观察对方。",
+                        "C. 发出警告声，表现出敌意。"
+                    ]
+                },
+                {
+                    text: "它最喜欢的玩具类型是？",
+                    options: [
+                        "A. 有猫薄荷的玩具。",
+                        "B. 能发出声音的玩具。",
+                        "C. 能追逐的激光点或移动物体。"
+                    ]
+                },
+                {
+                    text: "它理毛的频率是？",
+                    options: [
+                        "A. 非常频繁，是个爱干净的小家伙。",
+                        "B. 一般，看起来整洁即可。",
+                        "C. 很少自己理毛，需要你帮忙梳理。"
+                    ]
+                },
+                {
+                    text: "它对你工作的态度是？",
+                    options: [
+                        "A. 经常趴在键盘上或文件上，求关注。",
+                        "B. 在附近安静陪伴，不打扰你。",
+                        "C. 完全不理你，自己做自己的事。"
+                    ]
+                },
+                {
+                    text: "它探索新环境的方式是？",
+                    options: [
+                        "A. 大胆探索每个角落，毫不畏惧。",
+                        "B. 谨慎地一步步探索，随时准备撤退。",
+                        "C. 躲起来观察很久才敢出来。"
+                    ]
+                },
+                {
+                    text: "它对你其他家庭成员的态度？",
+                    options: [
+                        "A. 对所有人都很友好，是全家的小甜心。",
+                        "B. 有明确的偏好，只亲近特定的人。",
+                        "C. 对所有人都保持距离，包括家人。"
+                    ]
+                },
+                {
+                    text: "它发出叫声的频率和原因是？",
+                    options: [
+                        "A. 经常叫，主要是为了交流和表达需求。",
+                        "B. 偶尔叫，通常在饿了或想出去玩时。",
+                        "C. 很少叫，是个安静的小猫。"
+                    ]
+                },
+                {
+                    text: "它如何看待窗外的世界？",
+                    options: [
+                        "A. 经常守在窗边，对鸟类和行人很感兴趣。",
+                        "B. 偶尔看看，但不太在意。",
+                        "C. 对窗外完全没兴趣。"
+                    ]
+                },
+                {
+                    text: "它睡觉时的警觉程度是？",
+                    options: [
+                        "A. 睡得很沉，不容易被吵醒。",
+                        "B. 稍有动静就会醒来查看。",
+                        "C. 在安全的地方才敢深度睡眠。"
+                    ]
+                },
+                {
+                    text: "它对你的依赖程度是？",
+                    options: [
+                        "A. 非常依赖，你走到哪跟到哪。",
+                        "B. 适度依赖，需要时才会找你。",
+                        "C. 相当独立，很少主动寻求关注。"
+                    ]
+                },
+                {
+                    text: "它面对压力时的反应是？",
+                    options: [
+                        "A. 寻求你的安慰和抚摸。",
+                        "B. 躲起来自己处理。",
+                        "C. 表现出攻击性或不安行为。"
+                    ]
+                },
+                {
+                    text: "你认为它的'猫生哲学'是？",
+                    options: [
+                        "A. '爱与被爱是猫生最重要的事'",
+                        "B. '好奇心害不死猫，只会让猫生更精彩'",
+                        "C. '我的地盘我做主'"
+                    ]
+                },
+                {
+                    text: "总体而言，你觉得它的性格核心是？",
+                    options: [
+                        "A. 温柔粘人的小甜心。",
+                        "B. 独立自信的探险家。",
+                        "C. 警惕敏感的观察者。"
+                    ]
+                }
+            ],
+            
+            // 兔子题库 - 新增完整20题
+            rabbit: [
+                {
+                    text: "你靠近笼子时，它的第一反应是？",
+                    options: [
+                        "A. 兴奋地跳过来，期待食物或抚摸。",
+                        "B. 保持原地，观察你的举动。",
+                        "C. 紧张地躲进角落或躲避处。"
+                    ]
+                },
+                {
+                    text: "它表达开心的方式是？",
+                    options: [
+                        "A. 蹦跳、扭动身体（兔子舞）。",
+                        "B. 轻轻磨牙，发出满足的声音。",
+                        "C. 安静地待着，耳朵放松。"
+                    ]
+                },
+                {
+                    text: "它对陌生环境的适应能力？",
+                    options: [
+                        "A. 很快适应，大胆探索新地方。",
+                        "B. 需要一些时间才能放松。",
+                        "C. 非常害怕，很难适应变化。"
+                    ]
+                },
+                {
+                    text: "它与其他兔子的相处方式是？",
+                    options: [
+                        "A. 友好社交，喜欢互相理毛。",
+                        "B. 保持距离，互不打扰。",
+                        "C. 表现出领地意识，可能攻击。"
+                    ]
+                },
+                {
+                    text: "它对你的信任程度如何？",
+                    options: [
+                        "A. 完全信任，可以在你腿上睡觉。",
+                        "B. 适度信任，接受抚摸但不抱。",
+                        "C. 仍然警惕，不让人轻易触碰。"
+                    ]
+                },
+                {
+                    text: "它吃东西的习惯是？",
+                    options: [
+                        "A. 对食物很挑剔，有明确的偏好。",
+                        "B. 给什么吃什么，很好养活。",
+                        "C. 吃得很快，好像总是很饿。"
+                    ]
+                },
+                {
+                    text: "它活动的活跃时段是？",
+                    options: [
+                        "A. 清晨和黄昏最活跃。",
+                        "B. 白天活动，晚上休息。",
+                        "C. 没有固定模式，随时可能活动。"
+                    ]
+                },
+                {
+                    text: "它理毛的频率是？",
+                    options: [
+                        "A. 非常爱干净，经常整理毛发。",
+                        "B. 一般，看起来整洁即可。",
+                        "C. 不太在意，需要你帮忙梳理。"
+                    ]
+                },
+                {
+                    text: "它对声音的反应是？",
+                    options: [
+                        "A. 对声音很敏感，稍有动静就警惕。",
+                        "B. 只对特定声音有反应。",
+                        "C. 对声音不太在意，继续做自己的事。"
+                    ]
+                },
+                {
+                    text: "它探索新玩具的方式是？",
+                    options: [
+                        "A. 立即上前啃咬、推弄。",
+                        "B. 先观察，确认安全后再接近。",
+                        "C. 害怕新物品，需要很久才敢碰。"
+                    ]
+                },
+                {
+                    text: "它睡觉的姿势通常是？",
+                    options: [
+                        "A. 侧躺或伸展，很放松。",
+                        "B. 蹲坐，保持一定警觉。",
+                        "C. 躲在隐蔽处，蜷缩着睡。"
+                    ]
+                },
+                {
+                    text: "它标记领地的方式是？",
+                    options: [
+                        "A. 经常用下巴摩擦物品。",
+                        "B. 在固定地点排泄。",
+                        "C. 几乎不标记，很随和。"
+                    ]
+                },
+                {
+                    text: "它学习使用厕所的能力？",
+                    options: [
+                        "A. 很快学会在固定地点排泄。",
+                        "B. 有时会在厕所外排泄。",
+                        "C. 完全不会用厕所，随处排泄。"
+                    ]
+                },
+                {
+                    text: "它对你的呼唤有反应吗？",
+                    options: [
+                        "A. 听到呼唤会立即过来。",
+                        "B. 知道在叫它，但不一定过来。",
+                        "C. 对你的呼唤没有明显反应。"
+                    ]
+                },
+                {
+                    text: "它玩耍的方式是？",
+                    options: [
+                        "A. 喜欢推弄、扔掷玩具。",
+                        "B. 主要进行挖掘和啃咬。",
+                        "C. 不太玩耍，比较安静。"
+                    ]
+                },
+                {
+                    text: "它面对压力的反应是？",
+                    options: [
+                        "A. 跺后脚警告。",
+                        "B. 躲进安全的地方。",
+                        "C. 变得具有攻击性。"
+                    ]
+                },
+                {
+                    text: "它与其他宠物的相处是？",
+                    options: [
+                        "A. 友好相处，甚至成为朋友。",
+                        "B. 互相无视，和平共存。",
+                        "C. 紧张关系，需要隔离。"
+                    ]
+                },
+                {
+                    text: "它对你的依赖程度是？",
+                    options: [
+                        "A. 非常依赖，经常寻求关注。",
+                        "B. 适度依赖，享受互动但不强求。",
+                        "C. 相当独立，自得其乐。"
+                    ]
+                },
+                {
+                    text: "你认为它的'兔生哲学'是？",
+                    options: [
+                        "A. '生活就是冒险与探索'",
+                        "B. '安全第一，享受第二'",
+                        "C. '独处的艺术最美好'"
+                    ]
+                },
+                {
+                    text: "总体而言，你觉得它的性格核心是？",
+                    options: [
+                        "A. 活泼好奇的探险家。",
+                        "B. 温柔敏感的艺术灵魂。",
+                        "C. 独立自信的独行侠。"
+                    ]
+                }
+            ]
+        };
+
+        // === MBTI维度定义 ===
+        const MBTI_DIMENSIONS = {
+            E_I: { E: 0, I: 0 }, // 外向-内向
+            S_N: { S: 0, N: 0 }, // 实感-直觉
+            T_F: { T: 0, F: 0 }, // 思考-情感
+            J_P: { J: 0, P: 0 }  // 判断-感知
+        };
+
+        // === 宠物MBTI评分系统 ===
+        const petScoringSystems = {
+            // 狗狗评分系统 - 完整20题
+            dog: [
+                // 问题1: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题2: T-F维度  
+                { dimension: "T_F", scores: { A: "F", B: "F", C: "T" } },
+                // 问题3: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "T" } },
+                // 问题4: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "T" } },
+                // 问题5: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题6: S-N维度
+                { dimension: "S_N", scores: { A: "S", B: "S", C: "N" } },
+                // 问题7: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "F" } },
+                // 问题8: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题9: J-P维度
+                { dimension: "J_P", scores: { A: "P", B: "J", C: "P" } },
+                // 问题10: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题11: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "F", C: "T" } },
+                // 问题12: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "E" } },
+                // 问题13: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "F", C: "T" } },
+                // 问题14: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "T" } },
+                // 问题15: J-P维度
+                { dimension: "J_P", scores: { A: "P", B: "J", C: "P" } },
+                // 问题16: J-P维度
+                { dimension: "J_P", scores: { A: "P", B: "J", C: "J" } },
+                // 问题17: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题18: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "F" } },
+                // 问题19: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "E", C: "I" } },
+                // 问题20: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "F", C: "F" } }
+            ],
+            
+            // 仓鼠评分系统 - 完整20题
+            hamster: [
+                // 问题1: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题2: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题3: S-N维度
+                { dimension: "S_N", scores: { A: "S", B: "S", C: "N" } },
+                // 问题4: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "J" } },
+                // 问题5: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题6: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题7: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题8: E-I维度
+                { dimension: "E_I", scores: { A: "I", B: "I", C: "I" } },
+                // 问题9: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题10: E-I维度
+                { dimension: "E_I", scores: { A: "I", B: "E", C: "I" } },
+                // 问题11: J-P维度
+                { dimension: "J_P", scores: { A: "I", B: "E", C: "E" } },
+                // 问题12: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题13: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题14: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题15: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "T" } },
+                // 问题16: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题17: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题18: T-F维度
+                { dimension: "T_F", scores: { A: "T", B: "T", C: "F" } },
+                // 问题19: T-F维度
+                { dimension: "T_F", scores: { A: "T", B: "T", C: "F" } },
+                // 问题20: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "T" } }
+            ],
+            
+            // 鸟类评分系统 - 完整20题
+            bird: [
+                // 问题1: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "E", C: "I" } },
+                // 问题2: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "E", C: "I" } },
+                // 问题3: S-N维度
+                { dimension: "S_N", scores: { A: "S", B: "S", C: "N" } },
+                // 问题4: S-N维度
+                { dimension: "S_N", scores: { A: "N", B: "S", C: "S" } },
+                // 问题5: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题6: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题7: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题8: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题9: E-I维度
+                { dimension: "E_I", scores: { A: "I", B: "E", C: "I" } },
+                // 问题10: J-P维度
+                { dimension: "J_P", scores: { A: "P", B: "J", C: "P" } },
+                // 问题11: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题12: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "I", C: "P" } },
+                // 问题13: S-N维度
+                { dimension: "S_N", scores: { A: "N", B: "S", C: "S" } },
+                // 问题14: J-P维度
+                { dimension: "J_P", scores: { A: "P", B: "P", C: "J" } },
+                // 问题15: T-F维度
+                { dimension: "T_F", scores: { A: "T", B: "F", C: "T" } },
+                // 问题16: S-N维度
+                { dimension: "S_N", scores: { A: "N", B: "S", C: "S" } },
+                // 问题17: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "F", C: "T" } },
+                // 问题18: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "F", C: "T" } },
+                // 问题19: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "F", C: "T" } },
+                // 问题20: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "F", C: "T" } }
+            ],
+            
+            // 蛇蛇评分系统 - 完整20题
+            snake: [
+                // 问题1: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题2: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题3: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题4: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题5: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题6: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题7: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题8: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题9: S-N维度
+                { dimension: "S_N", scores: { A: "S", B: "S", C: "S" } },
+                // 问题10: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题11: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题12: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题13: T-F维度
+                { dimension: "T_F", scores: { A: "T", B: "T", C: "F" } },
+                // 问题14: E-I维度
+                { dimension: "E_I", scores: { A: "I", B: "E", C: "I" } },
+                // 问题15: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "T" } },
+                // 问题16: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题17: T-F维度
+                { dimension: "T_F", scores: { A: "T", B: "T", C: "F" } },
+                // 问题18: T-F维度
+                { dimension: "T_F", scores: { A: "T", B: "F", C: "T" } },
+                // 问题19: T-F维度
+                { dimension: "T_F", scores: { A: "T", B: "T", C: "F" } },
+                // 问题20: T-F维度
+                { dimension: "T_F", scores: { A: "T", B: "T", C: "F" } }
+            ],
+            
+            // 猫猫评分系统 - 完整20题
+            cat: [
+                // 问题1: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题2: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "T" } },
+                // 问题3: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题4: S-N维度
+                { dimension: "S_N", scores: { A: "S", B: "N", C: "S" } },
+                // 问题5: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "T" } },
+                // 问题6: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题7: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题8: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题9: S-N维度
+                { dimension: "S_N", scores: { A: "S", B: "S", C: "N" } },
+                // 问题10: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题11: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "F", C: "T" } },
+                // 问题12: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题13: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "F", C: "T" } },
+                // 问题14: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题15: S-N维度
+                { dimension: "S_N", scores: { A: "S", B: "S", C: "N" } },
+                // 问题16: J-P维度
+                { dimension: "J_P", scores: { A: "P", B: "J", C: "J" } },
+                // 问题17: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "F", C: "T" } },
+                // 问题18: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "T" } },
+                // 问题19: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "T" } },
+                // 问题20: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "T" } }
+            ],
+            
+            // 兔子评分系统 - 完整20题
+            rabbit: [
+                // 问题1: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题2: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "F", C: "T" } },
+                // 问题3: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题4: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "T" } },
+                // 问题5: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题6: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题7: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题8: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题9: E-I维度
+                { dimension: "E_I", scores: { A: "I", B: "I", C: "I" } },
+                // 问题10: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题11: J-P维度
+                { dimension: "J_P", scores: { A: "P", B: "J", C: "J" } },
+                // 问题12: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "J", C: "P" } },
+                // 问题13: J-P维度
+                { dimension: "J_P", scores: { A: "J", B: "P", C: "P" } },
+                // 问题14: E-I维度
+                { dimension: "E_I", scores: { A: "E", B: "I", C: "I" } },
+                // 问题15: S-N维度
+                { dimension: "S_N", scores: { A: "S", B: "S", C: "N" } },
+                // 问题16: T-F维度
+                { dimension: "T_F", scores: { A: "T", B: "T", C: "T" } },
+                // 问题17: T-F维度
+                { dimension: "T_F", scores: { A: "T", B: "F", C: "T" } },
+                // 问题18: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "F", C: "T" } },
+                // 问题19: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "T" } },
+                // 问题20: T-F维度
+                { dimension: "T_F", scores: { A: "F", B: "T", C: "T" } }
+            ]
+        };
+
+        // === 宠物MBTI结果类型定义 ===
+        const petMbtiTypes = {
+            // 狗狗结果类型
+            dog: {
+                esfp: {
+                    name: "ESFP - 表演者",
+                    color: "#FF6B6B",
+                    imageUrl: "https://placehold.co/300x300/FF6B6B/FFFFFF?text=ESFP",
+                    analysis: "你的狗狗是典型的ESFP表演者性格！它们热情奔放，热爱社交，是派对上的焦点。外向(E)型狗狗是典型的'社交花蝴蝶'，如金毛、拉布拉多。它们对人和狗都充满热情，能量来源于互动，孤独是它们最大的敌人。实感(S)型狗狗通过灵敏的嗅觉、听觉和味觉来构建世界地图。一个零食袋的声音、你回家时特定的脚步声，都是它们世界的重大事件。它们学习依靠重复和正向强化，是'实践出真知'的典范。情感(F)型狗狗是'小棉袄'，如很多金毛和柯基。它们极度渴望主人的情感反馈，一个表扬的眼神比一块零食更让它们开心。它们能敏锐察觉你的情绪，在你低落时给予安慰。感知(P)型狗狗则是'随性乐天派'。它们的生活没有严格时间表，随时可以睡觉，随时可以玩耍。出门散步，它们享受过程多于目的地，可能被一只蝴蝶、一阵新气味带跑偏。它们适应性强，对生活中的变化处之泰然。ESFP狗狗需要大量的社交和活动，否则容易因无聊而产生破坏行为。它们是优秀的家庭宠物，特别适合有孩子的活跃家庭。训练时应以游戏和正向激励为主，惩罚会让它们困惑和受伤。",
+                    interaction: "ESFP狗狗是社交达人，它们喜欢与其他狗狗一起玩耍，能够快速融入新群体。它们友善开朗的性格使它们成为狗公园里最受欢迎的伙伴。在与其他宠物相处方面，ESFP狗狗通常表现出极大的包容性。它们可能会试图与家中的猫咪建立友谊，尽管有时会因为过于热情而让猫咪感到困扰。对于小型宠物如仓鼠或鸟类，它们可能会表现出强烈的好奇心，因此需要主人的监督，确保它们不会因为过度的热情而惊吓到这些小动物。ESFP狗狗与其他狗狗相处时，它们是天生的社交家，能够迅速识别对方的情绪状态，并调整自己的行为以维持和谐的互动。它们喜欢参与群体游戏，如追逐、捡球等，并且往往是游戏中的活跃分子。这种狗狗通常对其他动物的幼崽也表现出耐心和宽容，有时甚至会扮演保护者的角色。然而，它们过于外向的性格有时会让内向的宠物感到压力，因此主人需要留意宠物间的互动，确保所有宠物都感到舒适。在多宠物家庭中，ESFP狗狗需要明确的休息时间，因为它们的社交电池也会耗尽，过度刺激可能导致行为问题。",
+                    balanceSteps: [
+                        "提供充足的社交机会：定期带它去狗公园或与朋友家的狗狗互动",
+                        "保持活动多样性：ESFP狗狗容易对单一游戏感到厌倦，尝试不同类型的玩具和活动",
+                        "正向强化训练：利用它的社交需求作为奖励，完成训练后给予社交时间",
+                        "建立日常规律：虽然它们随性，但一定的规律能帮助它们感到安全",
+                        "情感满足：给予大量的拥抱、抚摸和口头表扬，满足它们的情感需求"
+                    ],
+                   warmConclusion: "你的ESFP狗狗是永不落幕的派对主角！它用热情的飞扑、欢快的摇尾和无限的活力，将每一天都变成了值得庆祝的节日。请回应它的热情，带它见识更大的世界，你的掌声与陪伴，是这位天生表演者最渴望的舞台灯光。",
+warmConclusionTitle: "致表演者狗狗的主人"
+                },
+                
+                isfj: {
+                    name: "ISFJ - 守护者", 
+                    color: "#4ECDC4",
+                    imageUrl: "https://placehold.co/300x300/4ECDC4/FFFFFF?text=ISFJ",
+                    analysis: "你的狗狗是ISFJ守护者性格！它们忠诚可靠，细心体贴，是家庭中最可靠的伙伴。内向(I)型狗狗，如部分松狮、柴犬，则更为持重。它们可能只对主人和家人展现全部热情，在外则冷静观察。它们的能量来源于安静陪伴和独处时光，并非不爱主人，只是表达方式更为含蓄内敛。实感(S)型狗狗通过灵敏的嗅觉、听觉和味觉来构建世界地图。一个零食袋的声音、你回家时特定的脚步声，都是它们世界的重大事件。它们对家庭环境的任何细微变化都极其敏感，是优秀的'家庭守护者'。情感(F)型狗狗是'小棉袄'，如很多金毛和柯基。它们极度渴望主人的情感反馈，一个表扬的眼神比一块零食更让它们开心。它们能敏锐察觉你的情绪，在你低落时给予安慰。ISFJ狗狗特别擅长记住家庭成员的喜好和习惯，会默默调整自己的行为来适应每个人。判断(J)型狗狗是'规律生活家'。它们有着强大的生物钟，准时催饭、遛弯，对每天的流程了如指掌。它们喜欢 predictability（可预测性），突然的改变会让它们不安。ISFJ狗狗是优秀的工作犬和治疗犬，它们的稳定性和可靠性使它们成为理想的服务动物。",
+                    interaction: "ISFJ狗狗在与其他狗狗相处时较为谨慎，它们需要时间来建立信任。一旦成为朋友，它们会展现出温柔体贴的一面，是可靠的好伙伴。在与其他宠物相处方面，ISFJ狗狗通常表现出耐心和包容。它们可能会对家中的其他宠物保持一定的距离，但不会主动挑衅或攻击。对于小型宠物，它们可能会表现出保护性的态度，尤其是当它们认为这些宠物是家庭的一部分时。ISFJ狗狗与其他狗狗相处时，它们不会立即参与激烈的玩耍，而是更倾向于观察和了解对方。一旦建立信任，它们会成为忠诚的玩伴，喜欢温和的游戏如散步、轻度的追逐等。它们对其他动物的幼崽特别温柔，有时会主动照顾和保护它们。这种狗狗通常能够与猫咪和平共处，尤其是如果它们从小一起长大。然而，它们对新来的宠物可能需要较长的适应期，主人应该给予足够的时间和空间让它们慢慢熟悉。在多宠物家庭中，ISFJ狗狗往往扮演着'大哥大姐'的角色，默默守护着其他宠物，但不会强行干涉它们的生活。",
+                    balanceSteps: [
+                        "创造安全环境：为它提供安静舒适的休息空间，避免过度刺激",
+                        "渐进式社交：不要强迫它立即与其他狗狗互动，给予足够的时间适应", 
+                        "建立信任关系：通过一致的日常互动和温柔的关怀建立深厚信任",
+                        "尊重它的界限：当它表现出不适时，给予空间和理解",
+                        "维持日常规律：保持喂食、散步和休息时间的稳定性"
+                    ],
+                   warmConclusion: "你的ISFJ狗狗是家庭最温柔的守护神。它或许不善言辞，却用每一次默默的跟随、每一个关切的眼神，编织出一张无声的守护之网。请珍惜这份细水长流的忠诚，在这个善变的世界里，它用一生的陪伴告诉你：家，就是有你在的地方。",
+warmConclusionTitle: "致守护者狗狗的主人"
+                },
+                
+                intj: {
+                    name: "INTJ - 战略家",
+                    color: "#4B0082",
+                    imageUrl: "https://placehold.co/300x300/4B0082/FFFFFF?text=INTJ",
+                    analysis: "你的狗狗是INTJ战略家性格！它们聪明独立，善于观察和分析，有着清晰的领地意识和行为逻辑。内向(I)型狗狗更为持重，可能只对主人和家人展现全部热情，在外则冷静观察。它们的能量来源于安静陪伴和独处时光，并非不爱主人，只是表达方式更为含蓄内敛。直觉(N)型狗狗展现出对抽象模式的兴趣，比如能学会开简单的门，或者对你的情绪变化有超乎寻常的理解力，仿佛能'读懂'你的心思。INTJ狗狗特别擅长解决问题，它们不会盲目服从，而是会分析指令的合理性和目的性。思考(T)型狗狗是'实用主义者'。它们的行为逻辑基于需求和本能。'我蹭你，是为了在你身上标记我的气味，宣示主权。''我让你摸，是因为我现在需要按摩。'它们独立、自我，对你的指令充耳不闻，是'合作的伙伴'而非'顺从的宠物'。判断(J)型狗狗是'规律生活家'。它们有着强大的生物钟，准时催饭、遛弯，对每天的流程了如指掌。它们喜欢 predictability（可预测性），突然的改变会让它们不安。INTJ狗狗需要智力挑战和环境控制感，否则容易因无聊而发展出破坏性行为。它们是优秀的工作犬，特别适合需要独立思考和决策的任务。",
+                    interaction: "INTJ狗狗在与其他宠物相处时表现出明确的等级观念和领地意识。它们通常不会主动寻求社交，而是更倾向于维持一个清晰的权力结构。在与其他狗狗相处时，INTJ狗狗往往会试图确立自己的主导地位，但它们的方式更加策略性而非直接冲突。它们可能会通过占据关键资源点（如食物碗、最喜欢的休息处）来无声地宣示主权。对于家中的猫咪，INTJ狗狗通常采取观察和评估的策略。它们不会立即表现出敌意或友好，而是会花时间了解这只猫咪的行为模式和威胁级别。一旦确定了相处方式，它们会严格执行自己设定的界限。对于小型宠物如仓鼠或鸟类，INTJ狗狗可能会表现出强烈的好奇心和潜在的捕猎本能。它们会花很长时间观察这些小动物的行为，寻找规律和弱点。即使它们不会真正伤害这些宠物，也可能会通过玻璃或笼子进行'精神狩猎'，这是一种本能的行为表现。INTJ狗狗与其他狗狗的相处方式取决于对方的性格。如果对方也是一只强势的狗，可能会产生智力上的较量；如果对方性格温和，INTJ狗狗通常会自然而然地成为策略制定者。",
+                    balanceSteps: [
+                        "提供智力挑战：益智玩具和复杂的训练能满足它的战略思维需求",
+                        "尊重独立空间：为它提供专属的休息区和资源，避免其他宠物打扰",
+                        "建立清晰的日常规律：INTJ狗狗讨厌意外，保持喂食、玩耍时间的稳定性",
+                        "避免强迫社交：不要强迫它与其他宠物互动，让它自己决定社交节奏",
+                        "战略游戏：设置需要解决问题才能获得奖励的游戏"
+                    ],
+                    warmConclusion: "你的INTJ狗狗是一位深谋远虑的军师。它不会盲目取悦，它的每一个行为都经过精密计算，旨在实现效率与舒适的最大化。请用挑战与尊重来对待它的智慧，与它进行一场智力上的博弈，你会发现，它不仅是宠物，更是一位有着独立意志的战略伙伴。",
+warmConclusionTitle: "致战略家狗狗的主人"
+                },
+                
+                estp: {
+                    name: "ESTP - 企业家",
+                    color: "#FFA500",
+                    imageUrl: "https://placehold.co/300x300/FFA500/FFFFFF?text=ESTP",
+                    analysis: "你的狗狗是ESTP企业家性格！它们充满活力、冒险精神，是天生的行动派和问题解决者。外向(E)型ESTP狗狗是典型的'派对动物'，如杰克罗素梗、边境牧羊犬。它们精力充沛，需要大量的运动和刺激，否则容易变得破坏性。它们的能量完全来源于与外界的互动，独处对它们来说是煎熬。实感(S)型特质使它们高度关注当下环境，对声音、气味和运动物体极其敏感。ESTP狗狗生活在'此时此地'，对过去的教训和未来的规划都不太在意。思考(T)型决策方式让它们显得较为独立，有时会为了追求刺激而忽略主人的指令。它们的行为逻辑直接而务实，'这个行为能带来乐趣吗？能就做！'感知(P)型生活方式使它们灵活适应变化，但缺乏长期规划。ESTP狗狗的学习能力极强，但需要明确的界限和一致性训练。它们擅长敏捷训练、飞盘等需要快速反应的运动，是优秀的工作犬和运动伙伴。这种性格的狗狗需要主人提供充足的运动量和智力挑战，否则容易因无聊而产生行为问题。在训练方面，它们对即时奖励反应良好，但可能对重复性训练感到厌烦。",
+                    interaction: "ESTP狗狗在与其他宠物相处时充满活力和自信。它们喜欢主导游戏，往往能激发其他宠物的参与热情。与狗狗相处时，ESTP类型通常会成为群体的领导者，组织追逐游戏和其他互动活动。它们对活泼好动的狗狗伙伴特别感兴趣，能够建立基于共同活动的深厚友谊。然而，它们过于旺盛的精力有时会让内向的狗狗感到压力，需要主人留意调节互动强度。与猫咪相处时，ESTP狗狗需要较长的适应期。它们可能会被猫咪的快速移动激发追逐本能，因此初期需要在监督下互动。一旦建立理解，它们能够学会尊重猫咪的界限，甚至发展出有趣的跨物种游戏方式。对于小型宠物如仓鼠或鸟类，ESTP狗狗需要严格的监督。它们强烈的捕猎本能可能会被这些小动物的移动触发，因此不建议在没有防护的情况下让它们单独相处。在多宠物家庭中，ESTP狗狗需要一个明确的领导者（通常是主人）来维持秩序。它们尊重权威，但会测试界限，因此一致性训练至关重要。",
+                    balanceSteps: [
+                        "提供充足的运动：每天至少2次高强度运动，如跑步、接球",
+                        "智力刺激：定期引入新玩具和训练挑战，防止无聊",
+                        "明确界限：建立清晰的规则和一致性训练",
+                        "社交机会：提供与其他活泼狗狗的定期互动", 
+                        "冒险满足：设置安全的探索和冒险机会"
+                    ],
+                    warmConclusion: "你的ESTP狗狗用无尽的活力和勇气为你展示着世界的精彩。它们教会你活在当下、勇敢尝试新事物。请用耐心和坚定引导它们澎湃的能量，将它们的冒险精神转化为积极的探索。在它们眼中，每个新的一天都是值得全力以赴的冒险，这份对生活的热情是最珍贵的礼物。",
+                    warmConclusionTitle: "致企业家狗狗的主人"
+                },
+                
+                enfj: {
+                    name: "ENFJ - 主人公", 
+                    color: "#FF6B6B",
+                    imageUrl: "https://placehold.co/300x300/FF6B6B/FFFFFF?text=ENFJ", 
+                    analysis: "你的狗狗是ENFJ主人公性格！它们天生具有领导力和同理心，是群体的和谐维护者和情感纽带。外向(E)型ENFJ狗狗是典型的'社交大师'，如金毛寻回犬、拉布拉多。它们不仅喜欢与其他狗狗互动，还能敏锐感知人类的情绪状态。它们的能量来源于社交和情感交流，孤独会让它们抑郁。直觉(N)型特质使它们能够理解抽象的社会动态，往往能预见冲突并主动调解。ENFJ狗狗能'读懂空气'，感知家庭氛围的微妙变化。情感(F)型决策方式让它们极度关注群体和谐，会主动安慰悲伤的家庭成员或其他宠物。它们的行为动机很大程度上是为了维系情感连接和促进和谐。判断(J)型生活方式使它们喜欢结构和规律，是优秀的服务犬和治疗犬候选。ENFJ狗狗对表扬和情感联系反应强烈，训练时应以正向强化为主。它们需要感觉自己是有用的，因此赋予它们一些'工作'如拿拖鞋、看护小孩会让它们特别满足。这种性格的狗狗容易分离焦虑，因为它们深深依赖与家人的情感连接。它们是优秀的情感支持动物，能给整个家庭带来温暖和和谐。",
+                    interaction: "ENFJ狗狗在与其他宠物相处时展现出惊人的同理心和领导才能。它们天生懂得如何维持群体和谐，往往会主动调解冲突、照顾弱势成员。与狗狗相处时，ENFJ类型通常成为群体的'情感粘合剂'。它们能敏锐察觉其他狗狗的情绪状态，主动安慰紧张的伙伴或制止过度的玩耍。对于害羞或新来的狗狗，它们会耐心引导，帮助融入群体。与猫咪相处时，ENFJ狗狗表现出极大的耐心和理解。它们不会强迫互动，而是等待猫咪主动接近。一旦建立信任，它们可能成为猫咪的保护者和陪伴者，甚至一起休息、分享空间。对于小型宠物，ENFJ狗狗通常表现出保护性态度。它们理解这些小伙伴的脆弱性，往往会保持安全距离或在主人要求下担任守护角色。在多宠物家庭中，ENFJ狗狗自然成为和谐维护者，但它们也需要独处时间恢复能量，过度社交会让它们疲惫。它们对家庭氛围极其敏感，紧张的环境会直接影响它们的幸福感。",
+                    balanceSteps: [
+                        "情感满足：提供充足的关爱和情感互动，满足它们的情感需求",
+                        "社交领导：允许它在可控环境中发挥领导才能，如带领其他宠物",
+                        "规律生活：维持稳定的日常作息和家庭规则，提供安全感",
+                        "独处训练：教会它健康独处，避免分离焦虑",
+                        "服务机会：给予它们照顾其他宠物或家庭成员的任务"
+                    ],
+                    warmConclusion: "你的ENFJ狗狗用与生俱来的同理心温暖着整个家庭。它们不仅是宠物，更是情感的支持者和和谐的守护者。请珍惜这份深刻的情感连接，在它们给予关爱的同时，也给予它们需要的安全感和归属感。看着它们忙碌地维系着家庭的和谐，你会明白，有些爱不需要言语，只需要一颗愿意理解和关怀的心。",
+                    warmConclusionTitle: "致主人公狗狗的主人"
+                },
+                
+                infp: {
+                    name: "INFP - 调停者",
+                    color: "#DDA0DD",
+                    imageUrl: "https://placehold.co/300x300/DDA0DD/FFFFFF?text=INFP",
+                    analysis: "你的狗狗是INFP调停者性格！它们敏感、理想主义，有着丰富的内心世界和深刻的共情能力。内向(I)型INFP狗狗是安静的观察者，如部分柯基、喜乐蒂牧羊犬。它们能量来源于独处和安静的环境，过度刺激会让它们紧张。它们可能不会立即对陌生人表现出热情，但一旦建立信任，会展现出深厚的忠诚。直觉(N)型特质使它们能够感知微妙的情感变化，往往能理解主人未说出口的情绪。INFP狗狗似乎能'读懂人心'，在你需要时提供安静的陪伴。情感(F)型决策方式让它们极度重视和谐与道德，讨厌冲突和不公正。它们可能会在家庭成员争吵时表现出不安，试图调解或提供安慰。感知(P)型生活方式使它们灵活适应，但可能缺乏主动性。INFP狗狗对批评极其敏感，训练时需要温柔耐心的方法。它们有着强烈的个人价值观，不会盲目服从觉得不合理的指令。这种性格的狗狗适合安静的家庭环境，是优秀的情感支持动物。它们可能表现出对艺术、音乐的独特反应，显示出深刻的敏感性。INFP狗狗需要时间来建立深厚的信任关系，但一旦建立，这份连接将是终身且深刻的。",
+                    interaction: "INFP狗狗在与其他宠物相处时温和、敏感且富有同情心。它们不会主动寻求领导地位，而是更愿意作为和平的维护者和支持者。与狗狗相处时，INFP类型往往选择一两个亲密的朋友而非广泛的社交圈。它们喜欢深度连接，与性格相似的狗狗发展出几乎心灵感应的默契。对于强势或过于活泼的狗狗，它们可能会感到压力并选择回避。与猫咪相处时，INFP狗狗表现出惊人的理解和尊重。它们能感知猫咪微妙的肢体语言，给予对方需要的空间。这种相互尊重往往能发展出深厚的跨物种友谊，它们可能一起安静休息、互相陪伴。对于小型宠物，INFP狗狗通常表现出温柔的保护欲。它们理解这些小伙伴的脆弱，会默默守护而不会过度干扰。在多宠物家庭中，INFP狗狗需要明确的安静空间，当群体互动过于激烈时能够 retreat。它们对家庭氛围极其敏感，紧张的环境会直接影响它们的幸福感。INFP狗狗往往能成为其他宠物的情感支持者，特别是对那些害羞或紧张的伙伴。",
+                    balanceSteps: [
+                        "安静环境：提供宁静的休息空间，避免过度刺激",
+                        "深度连接：鼓励与特定伙伴发展深厚关系，而非强迫广泛社交",
+                        "温柔训练：使用正向、温和的训练方法，避免严厉惩罚",
+                        "创意表达：提供艺术性互动如音乐陪伴、气味探索游戏",
+                        "情感安全：建立稳定、和谐的家庭氛围"
+                    ],
+                    warmConclusion: "你的INFP狗狗用敏感的灵魂感知着世界的美丽与悲伤。它们教会你关注细微、珍惜宁静。请保护它们柔嫩的内心，在喧嚣世界中为它们保留一片宁静的港湾。它们可能不会用夸张的方式表达爱意，但它们深情的目光和安静的陪伴诉说着最真挚的情感。在这个强调外向的世界里，它们的内向敏感是值得珍视的独特礼物。",
+                    warmConclusionTitle: "致调停者狗狗的主人"
+                },
+                
+                istj: {
+                    name: "ISTJ - 物流师",
+                    color: "#4ECDC4",
+                    imageUrl: "https://placehold.co/300x300/4ECDC4/FFFFFF?text=ISTJ",
+                    analysis: "你的狗狗是ISTJ物流师性格！它们可靠、务实，是传统和规则的坚定维护者。内向(I)型ISTJ狗狗是稳重的伙伴，如德国牧羊犬、罗威纳。它们能量来源于熟悉的环境和规律的作息，变化会让它们不安。它们可能不会立即对陌生人表现出热情，但一旦接受，会展现出深厚的忠诚。实感(S)型特质使它们高度关注具体细节，能记住熟悉的路线、声音和日常流程。ISTJ狗狗是优秀的'习惯动物'，它们依靠重复和经验来理解世界。思考(T)型决策方式让它们显得较为独立和务实，行为基于逻辑而非情感。它们不会盲目服从，而是会分析指令的合理性和目的性。判断(J)型生活方式使它们极度重视规律和承诺，是优秀的工作犬和守护者。ISTJ狗狗学习速度可能较慢但记忆持久，一旦学会就不会忘记。它们对家庭和领地有强烈的保护意识，是可靠的守护者。这种性格的狗狗需要明确的社会结构和清晰的指令，模糊的界限会让它们困惑。ISTJ狗狗是优秀的工作伙伴，特别适合需要可靠性和一致性的任务。",
+                    interaction: "ISTJ狗狗在与其他宠物相处时表现出可靠性和责任感。它们尊重既定的社会结构，不会轻易挑战权威。与狗狗相处时，ISTJ类型通常采取观察而后行动的策略。它们需要时间评估新伙伴，一旦接受就会展现出忠诚和保护性。它们喜欢清晰的社交规则，混乱的群体动态会让它们不适。与猫咪相处时，ISTJ狗狗基于既往经验形成固定互动模式。如果从小一起长大，它们可能发展出深厚的友谊；如果后期引入，则需要漫长的适应期。它们尊重界限，一旦了解猫咪的规则就会严格遵守。对于小型宠物，ISTJ狗狗通常表现出谨慎的态度。它们不会立即信任，但一旦确认为'家庭成员'就会承担保护责任。在多宠物家庭中，ISTJ狗狗需要清晰的角色定义和资源分配。它们讨厌变化和不确定性，新宠物的引入需要极其缓慢的过程。ISTJ狗狗往往是家庭的'稳定器'，它们的存在为其他宠物提供安全感和 predictability。",
+                    balanceSteps: [
+                        "稳定环境：保持日常作息和环境的一致性，避免频繁变化",
+                        "明确规则：建立清晰、一致的家庭规则和界限",
+                        "渐进社交：缓慢引入新伙伴，给予充足适应时间",
+                        "责任赋予：给予明确的守护或工作任务，满足它们的工作需求",
+                        "耐心训练：使用重复和一致性训练方法，尊重它们的学习节奏"
+                    ],
+                    warmConclusion: "你的ISTJ狗狗用坚定不移的忠诚守护着家庭的传统和安全。它们教会你承诺的价值和稳定的力量。请尊重它们对规律的需求，在变化的世界中为它们提供可预测的港湾。它们可能不会用最花哨的方式表达爱意，但它们日复一日的可靠陪伴是最深情的告白。在这个善变的世界里，它们的稳定性是无可替代的宝贵财富。",
+                    warmConclusionTitle: "致物流师狗狗的主人"
+                },
+                
+                entp: {
+                    name: "ENTP - 辩论家",
+                    color: "#45B7D1",
+                    imageUrl: "https://placehold.co/300x300/45B7D1/FFFFFF?text=ENTP",
+                    analysis: "你的狗狗是ENTP辩论家性格！它们聪明、好奇，喜欢智力挑战和创意解决问题。外向(E)型ENTP狗狗是永不停歇的探索者，如边境牧羊犬、贵宾犬。它们能量来源于新奇的刺激和智力互动，无聊是它们最大的敌人。它们喜欢'辩论'和测试界限，往往会用各种方式表达自己的意见。直觉(N)型特质使它们擅长发现模式和联系，能快速学会复杂技巧并发明新游戏。ENTP狗狗是'点子王'，总是能找到新的方式来娱乐自己和挑战主人。思考(T)型决策方式让它们独立且喜欢测试界限，往往会'辩论'主人的指令。它们需要认为指令'有意义'才会执行，否则可能选择性地'失聪'。感知(P)型生活方式使它们灵活多变，讨厌重复和束缚。ENTP狗狗学习能力极强但可能选择性服从，它们需要不断新的挑战来保持投入。这种性格的狗狗适合敏捷训练、嗅探工作等需要智力的活动。它们容易厌倦常规训练，需要主人不断创新训练方法。ENTP狗狗是优秀的问题解决者，但需要明确的界限和一致性，否则可能变得难以管理。",
+                    interaction: "ENTP狗狗在与其他宠物相处时充满创意和好奇心。它们喜欢发明新游戏和互动方式，往往能激发整个群体的活力。与狗狗相处时，ENTP类型通常是'游戏发明家'。它们会创造复杂的追逐规则、藏宝游戏或其他智力挑战，带领其他狗狗参与。它们欣赏聪明的伙伴，对过于简单或被动的狗狗可能失去兴趣。与猫咪相处时，ENTP狗狗表现出强烈的好奇心和问题解决能力。它们会花时间研究猫咪的行为模式，试图理解并与之互动。这种智力上的挑战让它们着迷，往往能发展出基于相互尊重的复杂关系。对于小型宠物，ENTP狗狗需要密切监督。它们的好奇心可能让它们不断测试界限，寻找与这些小动物互动的新方式。在多宠物家庭中，ENTP狗狗需要充足的智力刺激和空间来探索。它们讨厌束缚，笼养或过度限制会让它们沮丧。ENTP狗狗往往能成为其他宠物的'娱乐总监'，但它们需要主人的指导来确保互动是安全和适当的。",
+                    balanceSteps: [
+                        "智力挑战：提供复杂的益智玩具和训练任务，满足它们的求知欲",
+                        "创意表达：允许它们发明游戏和解决问题，鼓励创新思维",
+                        "界限测试：建立清晰但灵活的规则框架，允许在安全范围内探索",
+                        "新奇体验：定期引入新环境、新朋友和新活动，防止无聊",
+                        "辩论引导：将它们的'辩论'倾向引导到积极的解决问题中"
+                    ],
+                    warmConclusion: "你的ENTP狗狗用无尽的智慧和好奇心为你打开新世界的大门。它们教会你质疑、探索和创新。请珍惜这份聪明的陪伴，用挑战而非束缚来引导它们的能量。它们可能不是最顺从的学生，但它们是最有趣的生活探险家。在它们眼中，每个规则都是用来理解的，每个界限都是用来测试的，这份永不满足的好奇心是推动世界前进的原始动力。",
+                    warmConclusionTitle: "致辩论家狗狗的主人"
+                }
+            },
+            
+            // 仓鼠结果类型
+            hamster: {
+                istj: {
+                    name: "ISTJ - 物流师",
+                    color: "#4ECDC4",
+                    imageUrl: "https://placehold.co/300x300/4ECDC4/FFFFFF?text=ISTJ",
+                    analysis: "你的仓鼠是ISTJ物流师性格！它们是勤劳务实的囤积者，有着严格的生活秩序和囤积本能。在仓鼠的世界里，内向(I)是绝对的基调。它们是独行的隐士，能量完全来源于独处的时光。一只极度内向(I)型仓鼠会将'躲避'作为第一要务，它们的存在感很低，你可能只在夜深人静时才能窥见它们活动的身影。仓鼠是纯粹的实感(S)型。它们的世界是由颊囊的触感、跑轮的转动、木屑的窸窣声和食物的具体味道构成的。它们不具备复杂的抽象思维能力，行为完全基于当下的感官输入和本能驱动。一个新玩具，它们会用最直接的方式——啃咬——来探索其质地和安全性。仓鼠是典型的思考(T)型逻辑家。它们的行为模式高度理性，完全遵循生存最优解。'靠近这个巨大的生物（你），可能获得食物（收益），但也伴随风险（成本）。'经过权衡，它可能选择接受你的喂食，但这不代表它对你产生了'情感'，而是它判断此刻收益大于风险。判断(J)型仓鼠是'秩序的建筑師'。它们有严格的活动路线、固定的藏食地点和整洁的巢穴。它们喜欢 predictability，每天在相似的时间做相似的事。更换笼内布局对它们是巨大的困扰，它们需要迅速重建秩序。",
+                    interaction: "ISTJ仓鼠在与其他仓鼠相处时表现出明确的界限感。它们通常是独居动物，不喜欢与其他仓鼠共享空间。如果被迫同笼，它们可能会表现出攻击性或极度压力。在与其他宠物相处方面，ISTJ仓鼠对其他种类的宠物通常保持高度警惕。它们可能会将任何接近笼子的动物视为潜在威胁，并采取躲藏或防御姿态。对于家中的狗狗或猫咪，它们可能会因为这些动物的体型和动作而感到恐惧，即使这些宠物并没有恶意。ISTJ仓鼠与同类相处时，它们通常是严格的独居者。在野外，仓鼠是 solitary animals（独居动物），这一特性在ISTJ仓鼠身上表现得尤为明显。它们对自己的领地和资源有强烈的保护意识，不愿意与其他仓鼠分享食物、水源或休息空间。如果必须与其他仓鼠共处，它们可能会通过吱吱叫声、肢体冲突或标记领地来表达不满。对于不同种类的宠物，ISTJ仓鼠通常采取回避策略。它们可能会在感觉到其他宠物靠近时立即躲进巢穴深处，直到确认安全才会出来。这种谨慎的行为是它们的生存本能，帮助它们在野外避免被捕食者发现。",
+                    balanceSteps: [
+                        "提供稳定的环境：保持笼内布局的一致性，避免频繁更换家具位置",
+                        "尊重独居天性：不要强迫它与其他仓鼠同笼，提供足够的个人空间",
+                        "建立信任关系：通过规律的喂食和温和的互动逐步建立信任",
+                        "创造安全藏身处：确保笼内有多个躲避处，让它感到安全"
+                    ],
+                    warmConclusion: "你的ISTJ仓鼠是勤勉的仓库管理员。它将‘囤积’这项本能升华为一门精确的艺术，每一个藏匿点、每一条活动路线都经过深思熟虑。请为它维持规律的作息与稳定的环境，在这片由你守护的小小王国里，它正用鼓鼓的颊囊和忙碌的身影，践行着‘积谷防饥’的最古老智慧。",
+warmConclusionTitle: "致仓鼠的主人"
+                },
+                
+                istp: {
+                    name: "ISTP - 鉴赏家",
+                    color: "#45B7D1",
+                    imageUrl: "https://placehold.co/300x300/45B7D1/FFFFFF?text=ISTP",
+                    analysis: "你的仓鼠是ISTP鉴赏家性格！它们独立自主，喜欢通过自己的方式探索世界。在仓鼠的世界里，内向(I)是绝对的基调。它们是独行的隐士，能量完全来源于独处的时光。相对外向的ISTP仓鼠可能会在熟悉环境后表现出更多的探索行为，但它们本质上依然是享受孤独的哲学家。仓鼠是纯粹的实感(S)型。它们的世界是由颊囊的触感、跑轮的转动、木屑的窸窣声和食物的具体味道构成的。ISTP仓鼠尤其擅长利用它们的感官来解决问题，比如找出隐藏的食物或找到逃离笼子的方法。仓鼠是典型的思考(T)型逻辑家。它们的行为模式高度理性，完全遵循生存最优解。ISTP仓鼠在这方面表现得尤为突出，它们可能会测试笼子的结构，寻找弱点，或者开发出独特的方式来获取食物。感知(P)型仓鼠则是'随性的艺术家'。它们的窝可能有点乱，活动时间也更随性。它们对新事物的适应期更短，甚至可能把突如其来的变化当作一场小冒险。但无论是哪种，它们对'囤积'这件事都有着近乎偏执的坚持，这是刻在基因里的判断(J)本能——为不可知的未来做准备。",
+                    interaction: "ISTP仓鼠在与其他仓鼠相处时表现出独立性。它们不会主动寻求社交，但也不排斥。如果被迫同笼，它们可能会找到自己的角落，尽量避免冲突。在与其他宠物相处方面，ISTP仓鼠对其他种类的宠物通常保持冷静观察的态度。它们可能会通过笼子观察家中的其他宠物，但不会表现出过度恐惧或兴奋。ISTP仓鼠与同类相处时，它们更倾向于观察和学习其他仓鼠的行为，而不是直接参与互动。它们可能会从远处观察其他仓鼠如何解决 problems，比如如何打开某个玩具或如何到达食物的位置。这种观察学习的能力使它们能够快速适应环境变化。对于不同种类的宠物，ISTP仓鼠通常采取冷静观察的策略。它们可能会静静地待在笼子里，观察狗狗或猫咪的行为模式，寻找规律和潜在的威胁。这种冷静的态度有时会让它们比其他仓鼠更能适应多宠物家庭的环境。然而，它们依然需要安全的藏身之处，以便在感到威胁时能够迅速躲避。",
+                    balanceSteps: [
+                        "提供智力挑战：益智玩具和寻找游戏能充分激发它们的潜能",
+                        "尊重独立性：给予足够的个人空间，不要过度干涉它们的独处时间",
+                        "建立清晰的规则：ISTP仓鼠需要明确一致的界限和预期",
+                        "冒险与探索：定期更换玩具和布局，满足它的探索欲望"
+                    ],
+                   warmConclusion: "你的ISTP仓鼠是身手敏捷的独行探险家。它用灵巧的爪子和敏锐的感官，将笼内生活过成了一场永不间断的生存挑战赛。请为它提供可以拆解和探索的玩具，在它那看似随性的行为背后，是一个不断通过动手实践来理解世界的工匠灵魂。",
+warmConclusionTitle: "致仓鼠的主人"
+                },
+                
+                isfp: {
+                    name: "ISFP - 探险家",
+                    color: "#96CEB4",
+                    imageUrl: "https://placehold.co/300x300/96CEB4/FFFFFF?text=ISFP",
+                    analysis: "你的仓鼠是ISFP探险家性格！它们敏感优雅，注重当下的感官体验，通过美丽的外观和细腻的姿态表达自己。在仓鼠的世界里，内向(I)是绝对的基调。它们是独行的隐士，能量完全来源于独处的时光。ISFP仓鼠虽然内向，但它们对美的感知特别敏锐，可能会对某些颜色的玩具或特定质地的垫材表现出偏好。仓鼠是纯粹的实感(S)型。它们的世界是由颊囊的触感、跑轮的转动、木屑的窸窣声和食物的具体味道构成的。ISFP仓鼠特别注重感官的愉悦体验，它们可能会花更多时间在选择最舒适的睡觉位置或最喜欢的食物上。情感(F)型仓鼠能够与主人建立深厚的情感联系。虽然它们不会像狗狗那样表达情感，但ISFP仓鼠可能会通过特定的行为表达对主人的信任，比如在你手中放松地睡觉或在看到你时表现出兴奋。感知(P)型仓鼠则是'随性的艺术家'。它们的窝可能有点乱，活动时间也更随性。它们对新事物的适应期更短，甚至可能把突如其来的变化当作一场小冒险。ISFP仓鼠特别喜欢探索新环境，但它们的方式更加优雅和细腻，不会像外向型仓鼠那样莽撞。",
+                    interaction: "ISFP仓鼠在与其他仓鼠相处时温和而优雅。它们不会主动寻求领导地位，但会成为群体中安静而美丽的存在。在与其他宠物相处方面，ISFP仓鼠通常保持距离，观察其他宠物的行为，寻找安全互动的可能性。ISFP仓鼠与同类相处时，它们更倾向于和谐共处而非竞争。它们可能会主动避免冲突，选择退让或寻找自己的空间。如果对方也是一只温和的仓鼠，它们可能会发展出深厚的友谊，互相理毛、一起休息。对于不同种类的宠物，ISFP仓鼠通常采取谨慎观察的策略。它们可能会花很长时间观察家中的猫咪或狗狗，了解它们的行为模式，然后决定如何与它们互动。这种仓鼠很少会主动挑衅其他宠物，但如果感到威胁，它们会选择躲避而非对抗。它们优雅的气质有时会吸引其他宠物的好奇，但通常不会引发冲突。",
+                    balanceSteps: [
+                        "创造宁静优美的环境：提供舒适的休息处和美丽的玩具，满足它的美感需求",
+                        "尊重个体节奏：不要强迫它参与不喜欢的活动，给予它选择是否互动的自由",
+                        "提供丰富的感官体验：多样的垫材、安全的植物和柔和灯光能丰富它的生活",
+                        "建立温和的信任关系：通过耐心和一致的互动建立深厚的信任"
+                    ],
+                    warmConclusion: "你的ISFP仓鼠是注重美感的生活家。它用优雅的姿态打理毛发，用挑剔的态度选择最舒适的睡榻，将日常活成了一种温和的艺术。请为它创造一个宁静而优美的小环境，它将以那份敏感与温柔，为你展示微观世界中不被察觉的诗意与美好。",
+warmConclusionTitle: "致仓鼠的主人"
+                },
+                
+                estj: {
+                    name: "ESTJ - 总经理",
+                    color: "#FF6B6B",
+                    imageUrl: "https://placehold.co/300x300/FF6B6B/FFFFFF?text=ESTJ",
+                    analysis: "你的仓鼠是ESTJ总经理性格！它们是高效的组织者，喜欢建立和维护明确的规则系统。外向(E)型ESTJ仓鼠在仓鼠中相对少见，但它们确实存在。这些仓鼠可能会更频繁地探索笼子，对新鲜事物表现出强烈兴趣，甚至可能试图'管理'它们的环境。实感(S)型特质使它们高度关注笼子里的每一个细节——食物的位置、水壶的高度、跑轮的顺畅度。思考(T)型决策方式让它们显得务实且目标明确，它们的行为逻辑清晰：囤积是为了生存，探索是为了安全。判断(J)型生活方式使它们成为笼子里的'项目经理'，有着严格的作息时间和活动路线。ESTJ仓鼠可能会表现出对笼内布局的强烈意见，如果移动了它们的食盆或窝，它们会立即开始重建秩序。这种性格的仓鼠学习能力很强，能快速掌握笼子的结构和资源分布。它们对常规的微小变化也很敏感，是优秀的'环境监测员'。",
+                    interaction: "ESTJ仓鼠在与其他仓鼠相处时表现出明确的领导倾向。如果被迫群居，它们往往会试图建立清晰的等级制度。在与其他宠物相处方面，ESTJ仓鼠对其他种类的宠物通常保持警惕但有条理的态度。它们会系统性地观察潜在威胁，制定应对策略。ESTJ仓鼠与同类相处时，它们往往是规则的制定者和执行者。如果群居，它们会建立明确的领地界限和资源分配规则。它们尊重秩序，但也要求其他仓鼠遵守它们设定的规则。对于不守规矩的同伴，它们可能会通过肢体语言或轻微的冲突来维护秩序。对于不同种类的宠物，ESTJ仓鼠通常采取系统化观察的策略。它们会记录其他宠物的活动模式，找出安全时段进行自己的活动。这种仓鼠很少惊慌失措，即使感到威胁也会按照既定计划躲避。它们对环境的控制欲使它们能够较好地适应多宠物家庭，只要它们的安全空间得到尊重。",
+                    balanceSteps: [
+                        "维持环境秩序：保持笼内布局的稳定性，尊重它们建立的系统",
+                        "提供管理机会：给予它们'管理'小物品或食物的机会",
+                        "建立清晰规则：保持喂食和互动的规律性",
+                        "尊重领导需求：在安全范围内允许它们建立环境控制"
+                    ],
+                    warmConclusion: "你的ESTJ仓鼠用严谨的态度管理着它的微型王国。它们教会你秩序的重要性和规划的智慧。请尊重它们对可控环境的需求，在这个小小的世界里，它们是最尽责的守护者和组织者。",
+                    warmConclusionTitle: "致仓鼠的主人"
+                },
+                
+                esfp: {
+                    name: "ESFP - 表演者",
+                    color: "#FFA500",
+                    imageUrl: "https://placehold.co/300x300/FFA500/FFFFFF?text=ESFP",
+                    analysis: "你的仓鼠是ESFP表演者性格！它们活泼外向，享受当下的快乐，是笼子里的开心果。外向(E)型ESFP仓鼠在仓鼠中比较罕见，但它们确实存在。这些仓鼠精力充沛，喜欢探索和互动，可能会主动接近笼边期待你的关注。实感(S)型特质使它们充分享受感官体验——美味的零食、舒适的垫材、有趣的玩具都是它们的快乐源泉。情感(F)型决策方式让它们更加关注情感联系，它们可能会通过特定的行为表达对主人的喜爱。感知(P)型生活方式使它们灵活随性，能够快速适应环境变化。ESFP仓鼠往往是最容易驯服的仓鼠类型，它们享受与人类的互动，喜欢被轻柔抚摸和获得零食奖励。这种性格的仓鼠需要丰富的环境刺激，否则容易因无聊而出现行为问题。它们是优秀的'第一只宠物仓鼠'，因为它们相对容易建立信任关系。",
+                    interaction: "ESFP仓鼠在与其他仓鼠相处时充满活力和友善。它们是群体中的社交中心，能够缓解紧张气氛。在与其他宠物相处方面，ESFP仓鼠对其他种类的宠物通常表现出好奇而非恐惧。它们可能会主动观察其他宠物，寻找互动的可能性。ESFP仓鼠与同类相处时，它们是和平的维护者和快乐的传播者。如果群居，它们会主动发起游戏，缓解冲突，让群体氛围更加和谐。它们对害羞的仓鼠特别有耐心，会温柔地引导新成员融入群体。对于不同种类的宠物，ESFP仓鼠通常采取开放探索的态度。它们不会立即躲藏，而是会观察、评估，然后决定如何互动。这种仓鼠能够与温和的猫咪或狗狗建立有趣的'隔笼关系'，通过玻璃互动。然而，它们的天真活泼也需要主人的保护，避免因过度信任而陷入危险。",
+                    balanceSteps: [
+                        "提供丰富刺激：定期更换玩具和引入新元素",
+                        "社交互动：每天花时间与它互动，满足社交需求",
+                        "安全探索：在监督下允许它探索笼外环境",
+                        "快乐体验：提供多样的食物和玩耍方式"
+                    ],
+                    warmConclusion: "你的ESFP仓鼠用无尽的活力和好奇心为你带来欢乐。它们教会你享受当下、珍惜简单的快乐。请保护它们天真烂漫的性格，在这个小小的笼子里，它们是最懂得生活艺术的快乐哲学家。",
+                    warmConclusionTitle: "致仓鼠的主人"
+                },
+                
+                infj: {
+                    name: "INFJ - 提倡者",
+                    color: "#4B0082",
+                    imageUrl: "https://placehold.co/300x300/4B0082/FFFFFF?text=INFJ",
+                    analysis: "你的仓鼠是INFJ提倡者性格！它们敏感深邃，有着丰富的内心世界和强烈的直觉能力。内向(I)型INFJ仓鼠是典型的沉思者，它们的大部分时间都在安静观察和思考。直觉(N)型特质使它们能够感知超出明显感官信息的事物，比如主人的情绪状态或环境中的微妙变化。情感(F)型决策方式让它们极度重视和谐与情感连接，它们可能会对特定的家庭成员表现出明显的偏好。判断(J)型生活方式使它们喜欢规律和可预测性，但同时保持着对深层意义的追求。INFJ仓鼠往往是最难驯服的仓鼠类型之一，因为它们需要极长的时间来建立信任。但一旦获得它们的信任，你会收获一份极其深刻和独特的情感连接。这种性格的仓鼠对艺术、音乐可能有独特的反应，显示出不寻常的敏感性。",
+                    interaction: "INFJ仓鼠在与其他仓鼠相处时表现出深刻的共情能力。它们能够感知同伴的情绪状态，并提供适当的安慰。在与其他宠物相处方面，INFJ仓鼠对其他种类的宠物通常保持谨慎但开放的态度。它们会花很长时间观察，试图理解这些不同生物的本质。INFJ仓鼠与同类相处时，它们是群体的'心灵导师'。它们不会追求领导地位，但其他仓鼠往往会自然地寻求它们的陪伴。它们对弱势或受伤的同伴表现出特别的关怀，有时会主动分享食物或理毛。对于不同种类的宠物，INFJ仓鼠通常采取深度观察的策略。它们不会立即做出反应，而是试图理解这些宠物的行为模式和情感状态。这种仓鼠可能与温和的猫咪或狗狗发展出几乎心灵感应般的关系，但它们需要绝对的信任和安全保障。",
+                    balanceSteps: [
+                        "深度信任建立：通过极其耐心和一致的方式建立连接",
+                        "宁静环境：提供安静、稳定的生活环境",
+                        "精神刺激：轻柔的音乐、自然声音等精神食粮",
+                        "尊重隐私：给予足够的独处时间和空间"
+                    ],
+                    warmConclusion: "你的INFJ仓鼠用敏感的靈魂感知着世界的深层韵律。它们教会你倾听寂静、理解无言。请珍惜这份深刻的精神连接，在这个喧嚣的世界里，它们是最细腻的心灵伴侣。",
+                    warmConclusionTitle: "致仓鼠的主人"
+                },
+                
+                entj: {
+                    name: "ENTJ - 指挥官",
+                    color: "#FF6B6B",
+                    imageUrl: "https://placehold.co/300x300/FF6B6B/FFFFFF?text=ENTJ",
+                    analysis: "你的仓鼠是ENTJ指挥官性格！它们是天生的领导者，有着清晰的愿景和实现目标的能力。外向(E)型ENTJ仓鼠在仓鼠中极为罕见，但它们确实存在。这些仓鼠精力充沛，喜欢探索和控制环境，往往会成为笼子里的'统治者'。直觉(N)型特质使它们能够看到更大的图景，比如理解笼子的整体布局和资源分布。思考(T)型决策方式让它们显得果断且目标导向，它们的行为总是服务于某个明确的目的。判断(J)型生活方式使它们极度重视效率和秩序，讨厌浪费时间和资源。ENTJ仓鼠可能会表现出不寻常的问题解决能力，比如找出打开笼门的方法或创建复杂的囤积系统。这种性格的仓鼠需要智力挑战和环境控制感，否则容易因挫折感而出现行为问题。",
+                    interaction: "ENTJ仓鼠在与其他仓鼠相处时表现出明确的领导才能。如果群居，它们会自然地成为群体的组织者和决策者。在与其他宠物相处方面，ENTJ仓鼠对其他种类的宠物通常保持冷静评估的态度。它们不会盲目恐惧，而是会分析威胁级别并制定应对策略。ENTJ仓鼠与同类相处时，它们是无可争议的领导者。它们会建立清晰的社交结构，分配资源，组织集体活动。它们尊重能力和贡献，可能会给予有能力的下属一定的自主权。对于不同种类的宠物，ENTJ仓鼠通常采取战略评估的态度。它们会分析这些宠物的行为模式，找出互动的可能性或规避威胁的方法。这种仓鼠很少表现出无谓的恐惧，它们的每个反应都是经过计算的。",
+                    balanceSteps: [
+                        "领导机会：提供它们可以'管理'的小任务或环境",
+                        "智力挑战：复杂的益智玩具和问题解决机会",
+                        "战略空间：允许它们规划笼内布局和活动路线",
+                        "目标导向：设置明确的挑战和奖励系统"
+                    ],
+                    warmConclusion: "你的ENTJ仓鼠用非凡的智慧和领导力管理着它的微型帝国。它们教会你愿景的重要性和执行的决心。请尊重它们对控制和效率的需求，在这个小小的世界里，它们是最出色的战略家和指挥官。",
+                    warmConclusionTitle: "致仓鼠的主人"
+                },
+                
+                enfp: {
+                    name: "ENFP - 竞选者",
+                    color: "#DDA0DD",
+                    imageUrl: "https://placehold.co/300x300/DDA0DD/FFFFFF?text=ENFP",
+                    analysis: "你的仓鼠是ENFP竞选者性格！它们热情洋溢，充满创意，总是能找到新的方式来探索和享受生活。外向(E)型ENFP仓鼠在仓鼠中比较特殊，它们享受互动和新鲜体验，可能会主动寻求主人的关注。直觉(N)型特质使它们能够看到可能性而非局限，它们往往会发明新的游戏方式或探索路径。情感(F)型决策方式让它们关注情感价值和连接，它们的行为往往是为了获得快乐和分享喜悦。感知(P)型生活方式使它们灵活适应，享受生活中的意外惊喜。ENFP仓鼠往往是最有趣的宠物之一，它们会发明各种可爱的行为来娱乐自己和主人。这种性格的仓鼠需要持续的新鲜刺激和情感互动，否则容易因单调而沮丧。",
+                    interaction: "ENFP仓鼠在与其他仓鼠相处时充满创意和热情。它们是群体中的灵感来源，能够把普通的日常变成有趣的冒险。在与其他宠物相处方面，ENFP仓鼠对其他种类的宠物通常表现出好奇和友好。它们可能会试图与这些'大朋友'交流，尽管需要主人的保护。ENFP仓鼠与同类相处时，它们是快乐的传播者和游戏发明家。它们会创造新的玩耍方式，带领群体参与有趣的活动。它们对每只仓鼠都充满兴趣，能够与各种性格的同伴建立联系。对于不同种类的宠物，ENFP仓鼠通常采取开放探索的态度。它们不会立即判断威胁，而是会好奇地观察，寻找互动的可能性。这种天真有时需要主人的保护，但它们的开朗性格往往能融化其他宠物的心。",
+                    balanceSteps: [
+                        "创意表达：提供多种玩具和可改造的环境元素",
+                        "社交满足：充足的互动时间和关注",
+                        "新奇体验：定期引入新玩具、新食物、新布局",
+                        "快乐记录：记录它们的可爱行为，分享它们的快乐"
+                    ],
+                    warmConclusion: "你的ENFP仓鼠用无尽的创意和热情点亮着日常生活。它们教会你发现的喜悦和想象的力量。请珍惜这份纯真的快乐，在这个小小的笼子里，它们是最懂得生活魔法的快乐艺术家。",
+                    warmConclusionTitle: "致仓鼠的主人"
+                }
+            },
+            
+            // 鸟类结果类型
+            bird: {
+                enfp: {
+                    name: "ENFP - 竞选者",
+                    color: "#FF6B6B",
+                    imageUrl: "https://placehold.co/300x300/FF6B6B/FFFFFF?text=ENFP",
+                    analysis: "你的小鸟是ENFP竞选者性格！它们热情聪慧，充满创意，总是能找到新的方式来娱乐自己和与主人互动。外向(E)型小鸟是鸟类中的'社交达人'，如虎皮鹦鹉、牡丹鹦鹉。它们聒噪、活泼，需要极高的关注度和互动。它们的能量来源于与主人或其他鸟儿的玩耍，孤独会让它们抑郁甚至出现拔毛等行为问题。许多鹦鹉等聪明鸟类展现出强烈的直觉(N)型特质。它们具有强大的关联学习能力，能'直觉'地理解'开门'与'出去'的关系，能'举一反三'地解决取食难题，甚至能感知你情绪微妙变化，并在恰当的时候给你一个蹭头或一句模糊的'问候'。情感(F)型小鸟是真正的情感纽带。它们会选择一位'最爱的人'，并表现出强烈的依恋和占有欲。它们为你理毛，向你反刍食物（最高级别的爱意），在你伤心时安静陪伴。它们的行为动机很大程度上是为了维系和你的情感连接。感知(P)型小鸟则是'随性的艺术家'。它们的生活更富弹性，对新玩具和环境适应更快，甚至乐于接受变化。它们可能今天喜欢在这个栖杆上唱歌，明天又换一个地方。它们的鸣叫也更即兴，充满了各种不重复的、探索性的音符。",
+                    interaction: "ENFP小鸟在与其他鸟类相处时充满活力和创意。它们喜欢发明新的游戏方式，带领其他鸟儿一起玩耍。在与其他宠物相处方面，ENFP小鸟通常表现出好奇和友好，但需要主人的监督以确保安全。ENFP小鸟与其他鸟类相处时，它们是天生的领导者和创意源泉。它们会发明新的游戏，比如把玩具扔到地上看它弹跳，或者教其他鸟儿新的叫声。这种小鸟喜欢群体活动，如果家中养了多只鸟，它们往往会成为群体的中心。它们对其他鸟类的幼崽表现出特别的耐心和教导欲望，有时会主动照顾和教导年幼的鸟儿。对于不同种类的宠物，ENFP小鸟通常表现出强烈的好奇心。它们可能会试图与家中的猫咪或狗狗交流，尽管这种互动需要密切监督。它们聪明伶俐，能够快速学习如何与这些宠物安全相处，比如保持安全距离或在感到威胁时飞回笼子。然而，它们过于外向的性格有时会让其他宠物感到困扰，特别是那些喜欢安静的宠物。",
+                    balanceSteps: [
+                        "提供丰富的环境：多种玩具、栖木和探索机会能满足它们的好奇心",
+                        "社交互动：定期与它互动，满足它的社交需求，避免孤独",
+                        "智力挑战：复杂的益智玩具和训练能保持它们的兴趣",
+                        "建立安全空间：确保它有安全的休息处，当它需要安静时能够躲避"
+                    ],
+                    warmConclusion: "你的ENFP小鸟是灵感永不枯竭的开心果！它用即兴的歌唱、创意的游戏和无穷的社交热情，为你带来无尽的欢乐。请做它最忠实的观众，回应它每一个新奇的想法，你的家会因为这位小小的‘竞选者’而充满意想不到的活力与惊喜。",
+warmConclusionTitle: "致鸟类的主人"
+                },
+                
+                isfp: {
+                    name: "ISFP - 探险家",
+                    color: "#96CEB4",
+                    imageUrl: "https://placehold.co/300x300/96CEB4/FFFFFF?text=ISFP",
+                    analysis: "你的小鸟是ISFP探险家性格！它们优雅敏感，注重当下的感官体验，通过美丽的外观和优雅的姿态表达自己。内向(I)型小鸟，如一些文静的金丝雀、玄凤鹦鹉，则更倾向于自处。它们也会鸣叫，但更多是自娱自乐。它们享受你的存在，但不需要持续的互动，在你的身边安静地理毛或打盹，就是它们表达满足的方式。鸟类是实感(S)与直觉(N)的奇妙结合体。它们无疑是实感(S)型，依赖敏锐的视觉和听觉来导航、觅食和发现天敌。ISFP小鸟特别注重感官体验，它们欣赏美丽的事物，如色彩鲜艳的玩具或悦耳的音乐。情感(F)型小鸟是真正的情感纽带。ISFP小鸟虽然不善于表达强烈的情感，但它们会通过细微的方式展示对主人的信任和喜爱，比如允许你抚摸它们的头部或安静地待在你身边。感知(P)型小鸟则是'随性的艺术家'。它们的生活更富弹性，对新玩具和环境适应更快，甚至乐于接受变化。ISFP小鸟特别喜欢探索新环境，但它们的方式更加谨慎和优雅，不会像外向型小鸟那样莽撞。",
+                    interaction: "ISFP小鸟在与其他鸟类相处时温和而谨慎。它们不会主动寻求领导地位，但会成为群体中安静而可靠的存在。在与其他宠物相处方面，ISFP小鸟通常保持距离，观察其他宠物的行为，寻找安全互动的可能性。ISFP小鸟与其他鸟类相处时，它们更倾向于观察而非主导。它们可能会静静地待在栖木上，观察其他鸟儿的活动，偶尔加入但不强求。这种小鸟通常能够与各种性格的鸟儿和平共处，因为它们不具攻击性且尊重其他鸟儿的空间。它们对幼鸟特别温柔，有时会默默地照顾那些被忽视的幼鸟。对于不同种类的宠物，ISFP小鸟通常采取谨慎观察的策略。它们可能会花很长时间观察家中的猫咪或狗狗，了解它们的行为模式，然后决定如何与它们互动。这种小鸟很少会主动挑衅其他宠物，但如果感到威胁，它们会选择飞走而非对抗。它们优雅的气质有时会吸引其他宠物的好奇，但通常不会引发冲突。",
+                    balanceSteps: [
+                        "创造宁静环境：提供安静舒适的栖息地，避免过度刺激",
+                        "尊重个体空间：不要强迫它参与不喜欢的活动，给予选择权",
+                        "提供美学体验：美丽的玩具、自然栖木和柔和音乐能丰富它的生活",
+                        "建立信任关系：通过温和一致的互动建立深厚的信任"
+                    ],
+                   warmConclusion: "你的ISFP小鸟是优雅而敏感的艺术家。它用优美的姿态、对色彩与音乐的天然亲和，将生活过成了一场流动的感官盛宴。请为它提供一个宁静而美丽的环境，它将以那份不经意的优雅与温和的陪伴，成为你生活中一个恬静而诗意的存在。",
+warmConclusionTitle: "致鸟类的主人"
+                },
+                
+                infj: {
+                    name: "INFJ - 提倡者",
+                    color: "#4B0082",
+                    imageUrl: "https://placehold.co/300x300/4B0082/FFFFFF?text=INFJ",
+                    analysis: "你的小鸟是INFJ提倡者性格！它们敏感深邃，有着丰富的内心世界和强烈的直觉能力。内向(I)型小鸟更倾向于自处。它们也会鸣叫，但更多是自娱自乐。它们享受你的存在，但不需要持续的互动，在你的身边安静地理毛或打盹，就是它们表达满足的方式。许多鹦鹉等聪明鸟类展现出强烈的直觉(N)型特质。它们具有强大的关联学习能力，能'直觉'地理解'开门'与'出去'的关系，能'举一反三'地解决取食难题，甚至能感知你情绪微妙变化，并在恰当的时候给你一个蹭头或一句模糊的'问候'。INFJ小鸟特别擅长感知环境的氛围和主人的情绪状态。情感(F)型小鸟是真正的情感纽带。它们会选择一位'最爱的人'，并表现出强烈的依恋和占有欲。它们为你理毛，向你反刍食物（最高级别的爱意），在你伤心时安静陪伴。INFJ小鸟在这方面表现得尤为深刻，它们能够与主人建立几乎心灵感应般的深厚联系。判断(J)型小鸟是'生活规划师'。它们有固定的活动时间、喜爱的栖杆和熟悉的鸣叫模式。它们对环境的改变敏感，需要时间来适应新布局。INFJ小鸟特别注重生活的意义和目的，它们的行为往往有着深层的动机和意图。",
+                    interaction: "INFJ小鸟在与其他鸟类相处时表现出高度的敏感性和共情能力。它们通常不会主动寻求主导地位，而是更倾向于建立和谐的关系。在与其他宠物相处方面，INFJ小鸟能够敏锐感知其他动物的情绪状态，并做出适当的反应。INFJ小鸟与其他鸟类相处时，它们是和平的维护者。它们能够察觉同伴的情绪状态，并主动避免冲突。如果群体中出现紧张局势，它们可能会试图调解或提供安慰。对于家中的猫咪，INFJ小鸟通常采取谨慎但开放的态度。它们会仔细观察猫咪的行为模式，寻找安全互动的方式。一旦确定对方是友好的，它们可能会允许一定程度的接近，甚至发展出跨物种的友谊。对于狗狗，INFJ小鸟需要更长的适应期。它们会对狗狗的大小和活跃度感到警惕，但通过耐心的引导，它们能够学会与温和的狗狗和平共处。INFJ小鸟对环境的和谐度非常敏感，家庭中的紧张氛围会直接影响它们的幸福感。",
+                    balanceSteps: [
+                        "提供稳定安全的环境：保持日常规律和环境稳定性对INFJ小鸟至关重要",
+                        "尊重它的敏感天性：避免突然的噪音或变化，给予它足够的适应时间",
+                        "建立深厚的情感连接：通过耐心的互动和温柔的触摸建立信任关系",
+                        "创造和谐的多宠物环境：确保所有宠物都有各自的空间，减少竞争和冲突"
+                    ],
+                   warmConclusion: "你的INFJ小鸟是深邃的共情者。它能洞察你的情绪，在你需要时给予安静的陪伴或温柔的慰藉，仿佛一位小小的知心朋友。请珍惜这份超越物种的理解与连接，在这个喧闹的世界里，它用敏感的内心为你守护着一片宁静而富有深意的精神角落。",
+warmConclusionTitle: "致鸟类的主人"
+                },
+                
+                estj: {
+                    name: "ESTJ - 总经理",
+                    color: "#FF6B6B",
+                    imageUrl: "https://placehold.co/300x300/FF6B6B/FFFFFF?text=ESTJ",
+                    analysis: "你的小鸟是ESTJ总经理性格！它们是高效的组织者，喜欢建立和维护明确的规则系统。外向(E)型ESTJ小鸟精力充沛，喜欢互动和控制环境。它们可能会'管理'笼子里的其他鸟儿，组织集体活动或分配资源。实感(S)型特质使它们高度关注环境细节——食物的种类、水的新鲜度、栖木的位置都是它们关心的事项。思考(T)型决策方式让它们显得务实且目标明确，它们的行为总是服务于群体效率或个体生存。判断(J)型生活方式使它们成为优秀的'家庭管理者'，有着严格的活动时间和社交规则。ESTJ小鸟学习能力很强，能快速掌握复杂的指令和技巧。它们对常规的维护很在意，如果食盆空了或水脏了，它们会立即提醒主人。这种性格的小鸟适合有明确规则和规律的家庭环境。",
+                    interaction: "ESTJ小鸟在与其他鸟类相处时表现出明确的领导才能。如果群养，它们往往会成为群体的组织者和规则维护者。在与其他宠物相处方面，ESTJ小鸟对其他种类的宠物通常保持警惕但有条理的态度。它们会系统性地评估威胁，制定应对策略。ESTJ小鸟与其他鸟类相处时，它们是无可争议的领导者。它们会建立清晰的社交结构，组织集体活动，维护群体和谐。它们尊重能力和贡献，但要求明确的服从和秩序。对于不同种类的宠物，ESTJ小鸟通常采取战略管理的态度。它们会记录这些宠物的活动模式，找出安全互动的时机或规避威胁的方法。这种小鸟很少惊慌失措，即使面对威胁也会按照既定计划应对。",
+                    balanceSteps: [
+                        "提供领导机会：允许它们'管理'小群体或环境元素",
+                        "维持环境秩序：保持笼内布局和日常作息的稳定性",
+                        "智力挑战：复杂的训练任务和问题解决机会",
+                        "明确规则：建立清晰一致的家庭规则和互动方式"
+                    ],
+                    warmConclusion: "你的ESTJ小鸟用卓越的组织能力管理着它的空中王国。它们教会你效率的价值和秩序的美感。请尊重它们对结构和规则的需求，在这个小小的鸟笼里，它们是最出色的管理者和守护者。",
+                    warmConclusionTitle: "致鸟类的主人"
+                },
+                
+                istj: {
+                    name: "ISTJ - 物流师",
+                    color: "#4ECDC4",
+                    imageUrl: "https://placehold.co/300x300/4ECDC4/FFFFFF?text=ISTJ",
+                    analysis: "你的小鸟是ISTJ物流师性格！它们可靠务实，是传统和规则的坚定维护者。内向(I)型ISTJ小鸟是稳重的观察者，它们的大部分时间都在安静地执行日常任务。实感(S)型特质使它们高度关注具体细节——熟悉的栖木、固定的喂食时间、特定的玩具位置都是它们安全感的基础。思考(T)型决策方式让它们显得独立且务实，行为基于经验和逻辑而非一时冲动。判断(J)型生活方式使它们极度重视规律和承诺，是优秀的学习者和记忆者。ISTJ小鸟学习速度可能较慢但极其扎实，一旦掌握就不会忘记。它们对家庭环境有强烈的归属感，是可靠的伙伴。这种性格的小鸟需要明确的日常结构和可预测的环境，变化会让它们不安。",
+                    interaction: "ISTJ小鸟在与其他鸟类相处时表现出可靠性和稳定性。它们尊重既定的社会结构，不会轻易挑战权威。在与其他宠物相处方面，ISTJ小鸟对其他种类的宠物通常基于既往经验形成固定互动模式。ISTJ小鸟与其他鸟类相处时，它们通常是规则的遵守者和传统的维护者。它们不会追求领导地位，但会严格执行群体的社交规范。它们喜欢清晰的互动模式，混乱的群体动态会让它们不适。对于不同种类的宠物，ISTJ小鸟通常采取谨慎观察的态度。它们需要很长时间来评估新伙伴，一旦形成认知就会坚持既定的互动方式。这种小鸟能够与温和的猫咪或狗狗和平共处，但需要绝对的稳定性和可预测性。",
+                    balanceSteps: [
+                        "稳定环境：保持日常作息和环境布局的一致性",
+                        "明确预期：建立清晰、可预测的互动模式",
+                        "渐进适应：缓慢引入新元素，给予充足适应时间",
+                        "传统维护：尊重它们建立的日常仪式和习惯"
+                    ],
+                    warmConclusion: "你的ISTJ小鸟用坚定不移的忠诚守护着家庭的日常和传统。它们教会你坚持的价值和稳定的力量。请尊重它们对规律的需求，在变化的世界中为它们提供可预测的港湾，你会发现它们是最可靠的终身伙伴。",
+                    warmConclusionTitle: "致鸟类的主人"
+                },
+                
+                esfj: {
+                    name: "ESFJ - 执政官",
+                    color: "#DDA0DD",
+                    imageUrl: "https://placehold.co/300x300/DDA0DD/FFFFFF?text=ESFJ",
+                    analysis: "你的小鸟是ESFJ执政官性格！它们友善社交，注重和谐，喜欢成为群体中的关怀者和组织者。外向(E)型ESFJ小鸟是典型的'社交蝴蝶'，它们享受互动和群体活动，是优秀的沟通者。实感(S)型特质使它们高度关注群体的具体需求——谁饿了、谁需要理毛、哪里最安全都是它们关心的事项。情感(F)型决策方式让它们极度重视和谐与情感连接，它们会主动调解冲突、照顾弱势成员。判断(J)型生活方式使它们喜欢结构和规律，是优秀的家庭维护者。ESFJ小鸟对表扬和情感反馈反应强烈，训练时应以正向强化为主。它们需要感觉自己对群体有用，因此赋予它们一些'关怀角色'会让它们特别满足。这种性格的小鸟容易因社交不足而抑郁，需要定期的互动和关注。",
+                    interaction: "ESFJ小鸟在与其他鸟类相处时表现出温暖和关怀。它们是群体的情感中心，主动维护和谐、照顾需要帮助的成员。在与其他宠物相处方面，ESFJ小鸟对其他种类的宠物通常表现出友善和包容。ESFJ小鸟与其他鸟类相处时，它们是无可替代的'家庭粘合剂'。它们会记住每只鸟的喜好和需求，主动分享食物、理毛、提供安慰。它们对幼鸟和弱势个体特别关怀，是优秀的'养父母'。对于不同种类的宠物，ESFJ小鸟通常采取友好接纳的态度。它们可能会试图与家中的猫咪或狗狗建立友谊，通过叫声或姿态表达善意。这种小鸟的温暖性格往往能融化其他宠物的心，但需要主人的监督确保安全。",
+                    balanceSteps: [
+                        "社交满足：提供充足的群体互动和关注",
+                        "关怀机会：允许它们照顾其他宠物或扮演特定角色",
+                        "和谐环境：维持稳定、友好的家庭氛围",
+                        "情感反馈：给予充分的爱意表达和积极回应"
+                    ],
+                    warmConclusion: "你的ESFJ小鸟用温暖的胸怀包容着整个家庭。它们不仅是宠物，更是情感的维系者和和谐的创造者。请珍惜这份深厚的情感连接，在它们给予关爱的同时，也给予它们需要的归属感和价值感。",
+                    warmConclusionTitle: "致鸟类的主人"
+                },
+                
+                intp: {
+                    name: "INTP - 逻辑学家",
+                    color: "#45B7D1",
+                    imageUrl: "https://placehold.co/300x300/45B7D1/FFFFFF?text=INTP",
+                    analysis: "你的小鸟是INTP逻辑学家性格！它们聪明好奇，喜欢分析模式和解决复杂问题。内向(I)型INTP小鸟是典型的思考者，它们享受独处时光来进行'精神探索'。直觉(N)型特质使它们能够看到模式和联系，能理解抽象的概念和解决复杂的问题。思考(T)型决策方式让它们独立且理性，它们的行为基于逻辑分析而非情感冲动。感知(P)型生活方式使它们灵活适应，享受智力挑战和理论探索。INTP小鸟学习能力极强，能掌握复杂的技巧和解决困难的问题。它们对重复训练容易感到厌烦，需要持续的新鲜智力刺激。这种性格的小鸟适合提供丰富智力挑战的环境，是优秀的'问题解决者'。",
+                    interaction: "INTP小鸟在与其他鸟类相处时表现出分析性和独立性。它们更感兴趣于理解群体动态而非参与社交。在与其他宠物相处方面，INTP小鸟对其他种类的宠物通常采取观察研究的策略。INTP小鸟与其他鸟类相处时，它们更像是独立的学者而非社交者。它们会观察同伴的行为，分析其中的模式和逻辑，但很少主动参与群体活动。它们欣赏聪明的伙伴，能进行复杂的'智力交流'。对于不同种类的宠物，INTP小鸟通常采取数据收集的态度。它们会花很长时间观察这些宠物的行为，分析它们的活动规律和思维模式。这种分析性的态度使它们能够较好地适应多宠物家庭，因为它们理解其他动物的'行为算法'。",
+                    balanceSteps: [
+                        "智力刺激：提供复杂的益智玩具和问题解决机会",
+                        "探索空间：允许它们进行理论探索和模式分析",
+                        "尊重独立：给予足够的独处时间进行'思考'",
+                        "理论挑战：设置需要逻辑分析的学习任务"
+                    ],
+                    warmConclusion: "你的INTP小鸟用非凡的智慧探索着世界的运行规律。它们教会你质疑、分析和理解。请珍惜这份聪明的陪伴，用挑战而非束缚来引导它们的求知欲，你会发现它们是最深刻的生活哲学家。",
+                    warmConclusionTitle: "致鸟类的主人"
+                },
+                
+                entj: {
+                    name: "ENTJ - 指挥官",
+                    color: "#FFA500",
+                    imageUrl: "https://placehold.co/300x300/FFA500/FFFFFF?text=ENTJ",
+                    analysis: "你的小鸟是ENTJ指挥官性格！它们是天生的领导者，有着清晰的愿景和实现目标的能力。外向(E)型ENTJ小鸟精力充沛，喜欢控制和组织环境，往往会成为群体中的'统治者'。直觉(N)型特质使它们能够看到更大的图景和未来的可能性，能制定复杂的策略和计划。思考(T)型决策方式让它们显得果断且目标导向，它们的行为总是服务于某个明确的战略目的。判断(J)型生活方式使它们极度重视效率和秩序，讨厌浪费时间和资源。ENTJ小鸟可能会表现出非凡的领导才能和组织能力，能指挥其他鸟儿完成复杂任务。这种性格的小鸟需要智力挑战和环境控制感，否则容易因挫折感而出现行为问题。",
+                    interaction: "ENTJ小鸟在与其他鸟类相处时表现出明确的领导才能。如果群养，它们会自然地成为群体的战略家和决策者。在与其他宠物相处方面，ENTJ小鸟对其他种类的宠物通常保持冷静评估的态度。ENTJ小鸟与其他鸟类相处时，它们是无可争议的指挥官。它们会建立清晰的等级制度，分配任务，组织集体行动。它们尊重能力和效率，可能会给予有能力的下属一定的自主权。对于不同种类的宠物，ENTJ小鸟通常采取战略评估的态度。它们会分析这些宠物的威胁级别和行为模式，制定相应的互动或规避策略。这种小鸟很少表现出无谓的恐惧，它们的每个反应都是经过战略计算的。",
+                    balanceSteps: [
+                        "领导机会：提供它们可以指挥的小群体或任务",
+                        "战略挑战：复杂的训练任务和问题解决机会",
+                        "效率环境：优化笼内布局和资源分配",
+                        "目标实现：设置明确的目标和奖励系统"
+                    ],
+                    warmConclusion: "你的ENTJ小鸟用卓越的领导力规划着它的空中帝国。它们教会你愿景的重要性和执行的决心。请尊重它们对控制和效率的需求，在这个小小的鸟笼里，它们是最出色的战略家和指挥官。",
+                    warmConclusionTitle: "致鸟类的主人"
+                }
+            },                      
+            // 蛇蛇结果类型
+            snake: {
+                istj: {
+                    name: "ISTJ - 物流师",
+                    color: "#4ECDC4",
+                    imageUrl: "https://placehold.co/300x300/4ECDC4/FFFFFF?text=ISTJ",
+                    analysis: "你的蛇是ISTJ物流师性格！它们是淡定从容的哲学家，遵循着严格的生活规律和能量守恒原则。蛇是动物王国里终极的内向(I)型人格。它们的能量完全来源于独处与静止。社交、互动对它们而言毫无意义，甚至是巨大的能量消耗。一条健康的蛇，其理想状态就是找到一个安全舒适的角落，最大限度地减少活动，将能量用于消化、生长和生存。蛇是高度特化的实感(S)型感知者。它们通过舌头收集空气中的化学分子，通过腹部感知地面的震动，通过热窝（部分蛇类）探测红外线辐射。它们的世界是一个由气味地图、温度梯度和振动频率构成的、人类无法想象的感官宇宙。蛇是纯粹的思考(T)型逻辑机器。它们的行为遵循着冰冷而高效的生存算法。'这个体型大小的温热物体是食物吗？（是/否）''这个震动代表危险吗？（是/否）''这个环境的温度适合消化吗？（是/否）'在宏观生命周期上，它们是极端的判断(J)型。它们的生活有着极其固定的模式：寻找热源—消化—等待下一次进食—蜕皮—循环。它们渴望一个稳定不变的环境（温度、湿度、布局），任何变化都会迫使它们重启耗能的适应过程。",
+                    interaction: "ISTJ蛇在与其他蛇类相处时表现出明确的领地意识。它们通常是独居动物，不喜欢与其他蛇共享空间。如果被迫同处，它们可能会通过身体语言或化学信号表达不适。在与其他宠物相处方面，ISTJ蛇对其他种类的宠物通常完全无视，只要这些宠物不干扰它们的休息和消化。ISTJ蛇与同类相处时，它们是严格的独居者。在野外，大多数蛇类是 solitary animals（独居动物），这一特性在ISTJ蛇身上表现得尤为明显。它们对自己的领地和资源有强烈的保护意识，不愿意与其他蛇分享热源、藏身处或狩猎场地。如果必须与其他蛇共处，它们可能会通过身体姿势、舌头 flicking 或释放信息素来表达界限。对于不同种类的宠物，ISTJ蛇通常采取完全忽略的策略。它们可能会感知到其他宠物的存在，但只要这些宠物不构成直接威胁，它们就不会做出反应。这种冷静的态度是它们的生存策略的一部分，帮助它们节省能量用于更重要的活动如消化和生长。然而，如果其他宠物过于接近或表现出威胁性，它们可能会采取防御姿态或试图躲避。",
+                    balanceSteps: [
+                        "维持稳定环境：保持饲养箱温度、湿度和布局的一致性",
+                        "尊重独居天性：不要强迫它与其他蛇类共处一室",
+                        "建立可预测的日程：规律的喂食和清理能帮助它感到安全",
+                        "提供充足的藏身处：确保饲养箱内有多个躲避处，让它能够选择"
+                    ],
+                   warmConclusion: "你的ISTJ蛇是秩序与沉默的守护者。它用精确到分毫的体温调节和领地巡逻，诠释着何为极致的自律与可靠。请为它维持那份恒定的温暖与静谧，在这个由你构筑的微缩生态里，它正以最古老的生存智慧，向你展示生命最本真的模样——稳定，即是最大的安全感。",
+warmConclusionTitle: "致蛇蛇的主人"
+                },
+                
+                istp: {
+                    name: "ISTP - 鉴赏家",
+                    color: "#45B7D1",
+                    imageUrl: "https://placehold.co/300x300/45B7D1/FFFFFF?text=ISTP",
+                    analysis: "你的蛇是ISTP鉴赏家性格！它们是敏感谨慎的观察家，喜欢通过自己的方式探索环境。蛇是动物王国里终极的内向(I)型人格。它们的能量完全来源于独处与静止。ISTP蛇可能会在感到安全时表现出更多的探索行为，但它们本质上依然是享受孤独的生物。蛇是高度特化的实感(S)型感知者。它们通过舌头收集空气中的化学分子，通过腹部感知地面的震动，通过热窝（部分蛇类）探测红外线辐射。ISTP蛇特别擅长利用它们的感官来了解环境，比如找出逃脱的路线或识别新的气味。蛇是纯粹的思考(T)型逻辑机器。它们的行为遵循着冰冷而高效的生存算法。ISTP蛇在这方面表现得尤为突出，它们可能会测试饲养箱的结构，寻找弱点，或者开发出独特的方式来获取食物。在微观行为上，它们又呈现出感知(P)型的特质。它们没有固定的活动时间表，移动和探索显得随性而不可预测，完全遵循即时的感官输入和内在生理节律。",
+                    interaction: "ISTP蛇在与其他蛇类相处时表现出独立性和观察力。它们不会主动寻求社交，但会仔细观察其他蛇的行为。如果被迫同处，它们可能会找到自己的空间，尽量避免冲突。在与其他宠物相处方面，ISTP蛇对其他种类的宠物通常保持冷静观察的态度，通过感官收集信息，评估潜在威胁。ISTP蛇与同类相处时，它们更倾向于观察和学习其他蛇的行为，而不是直接互动。它们可能会从远处观察其他蛇如何 navigate 环境、如何选择热源或如何应对威胁。这种观察学习的能力使它们能够快速适应环境变化。对于不同种类的宠物，ISTP蛇通常采取冷静观察的策略。它们可能会静静地待在饲养箱里，通过舌头 flicking 收集其他宠物的化学信息，了解它们的行为模式和潜在威胁。这种冷静的态度有时会让它们比其他蛇更能适应多宠物家庭的环境。然而，它们依然需要安全的藏身之处，以便在感到威胁时能够迅速躲避。",
+                    balanceSteps: [
+                        "提供探索机会：定期更换环境布局，满足它的好奇心",
+                        "尊重独立性：不要过度干扰它的独处时间",
+                        "建立安全探索：在监督下允许它探索箱外环境",
+                        "观察行为变化：注意它的行为信号，及时调整环境"
+                    ],
+                    warmConclusion: "你的ISTP蛇是一位冷静的实践工程师。它用灵巧的探索和精准的问题解决能力，将栖息地变成了一个充满挑战的游乐场。请为它提供探索和解谜的机会，在它独立冷静的外表下，藏着一个渴望通过亲身实践来理解世界的好奇灵魂。",
+warmConclusionTitle: "致蛇蛇的主人"
+                },
+                
+                intp: {
+                    name: "INTP - 逻辑学家",
+                    color: "#4B0082",
+                    imageUrl: "https://placehold.co/300x300/4B0082/FFFFFF?text=INTP",
+                    analysis: "你的蛇是INTP逻辑学家性格！它们是深思熟虑的分析师，喜欢通过逻辑和模式来理解世界。蛇是动物王国里终极的内向(I)型人格。它们的能量完全来源于独处与静止。INTP蛇特别享受独处的时光，这是它们进行'思考'和'分析'的必要条件。蛇是高度特化的实感(S)型感知者。它们通过舌头收集空气中的化学分子，通过腹部感知地面的震动，通过热窝（部分蛇类）探测红外线辐射。INTP蛇在这方面表现得尤为出色，它们能够构建复杂的环境地图，记住温度梯度、隐藏处和食物源的位置。蛇是纯粹的思考(T)型逻辑机器。它们的行为遵循着冰冷而高效的生存算法。INTP蛇特别擅长分析模式和解决问题，它们可能会开发出独特的方法来获取食物或逃离不舒适的环境。感知(P)型蛇在微观行为上呈现出随性特质。它们没有固定的活动时间表，移动和探索显得随性而不可预测，完全遵循即时的感官输入和内在生理节律。INTP蛇特别喜欢探索新的环境布局，将它们视为需要解决的'谜题'。",
+                    interaction: "INTP蛇在与其他蛇类相处时表现出高度的分析能力。它们不会立即做出反应，而是会花时间观察和分析对方的行为模式。在与其他宠物相处方面，INTP蛇通常采取冷静观察的策略，通过收集数据来理解其他动物的行为逻辑。INTP蛇与同类相处时，它们更像是独立的学者而非社交者。它们可能会观察其他蛇的行为，分析其中的模式和逻辑，但很少主动参与互动。如果被迫同处，它们会找到自己的空间，专注于自己的'研究'。对于不同种类的宠物，INTP蛇通常采取数据收集的策略。它们可能会花很长时间观察家中的猫咪或狗狗，分析它们的行为模式、活动规律和潜在威胁。这种分析性的态度使它们能够更好地适应多宠物家庭的环境，因为它们理解其他动物的'行为算法'。然而，它们依然需要安全的私人空间，以便在需要时能够 retreat 进行'思考'。",
+                    balanceSteps: [
+                        "提供智力刺激：复杂的环境布局和觅食挑战能激发它的分析能力",
+                        "尊重思考时间：不要过度打扰它的独处，这是它处理信息的重要方式",
+                        "建立可预测的变化：定期但规律地更换环境，满足它对新谜题的渴望",
+                        "观察学习模式：注意它是如何解决问题的，据此调整环境设置"
+                    ],
+                    warmConclusion: "你的INTP蛇是一位沉思的哲学家。它用无尽的观察与内在的逻辑推演，构建着属于它自己的世界运行法则。请别打扰它的沉思，你为它提供的每一个新环境设置，都是它用于分析与解构的绝佳课题，在它沉默的注视下，是一个永不停歇的思考者大脑。",
+warmConclusionTitle: "致蛇蛇的主人"
+                },
+                
+                infj: {
+                    name: "INFJ - 提倡者",
+                    color: "#4B0082",
+                    imageUrl: "https://placehold.co/300x300/4B0082/FFFFFF?text=INFJ",
+                    analysis: "你的蛇是INFJ提倡者性格！它们敏感深邃，有着不寻常的直觉能力和对深层意义的追求。内向(I)型INFJ蛇是典型的沉思者，它们的大部分时间都在安静地感知和理解环境。直觉(N)型特质在蛇类中极为罕见，但INFJ蛇确实表现出超越明显感官的感知能力。它们似乎能'感知'环境的氛围和主人的情绪状态，对即将发生的变化有预知能力。情感(F)型决策方式让它们显得比其他蛇类更加'有灵性'，它们可能会对特定的饲养者表现出明显的偏好。判断(J)型生活方式使它们喜欢规律和可预测性，但同时保持着对生命意义的深层思考。INFJ蛇往往是最难理解的蛇类之一，因为它们的行为模式更加复杂和微妙。它们可能需要极长的时间来适应新环境，但一旦建立信任，会展现出独特的'个性'。这种性格的蛇对环境的和谐度非常敏感，是优秀的'环境指示器'。",
+                    interaction: "INFJ蛇在与其他蛇类相处时表现出深刻的感知能力。它们能够察觉同伴的情绪状态和环境中的微妙变化。在与其他宠物相处方面，INFJ蛇对其他种类的宠物通常保持谨慎但开放的态度。INFJ蛇与同类相处时，它们是和平的维护者和深层理解的追求者。它们不会追求主导地位，但其他蛇类往往会自然地尊重它们。它们对弱势或紧张的同伴表现出特别的感知，有时会主动避免冲突。对于不同种类的宠物，INFJ蛇通常采取深度感知的策略。它们不会立即判断威胁，而是试图理解这些宠物的本质和意图。这种蛇可能与温和的饲养者发展出几乎心灵感应般的关系，但它们需要绝对的信任和安全保障。",
+                    balanceSteps: [
+                        "深度信任建立：通过极其耐心和一致的方式建立连接",
+                        "和谐环境：维持稳定、和平的家庭氛围",
+                        "精神空间：提供安静、不受打扰的独处环境",
+                        "直觉尊重：注意它们对环境变化的敏感反应"
+                    ],
+                    warmConclusion: "你的INFJ蛇用敏感的感知探索着世界的深层韵律。它们教会你倾听寂静、理解无言。请珍惜这份深刻的精神连接，在这个喧嚣的世界里，它们是最细腻的存在哲学家。",
+                    warmConclusionTitle: "致蛇蛇的主人"
+                },
+                
+                estp: {
+                    name: "ESTP - 企业家",
+                    color: "#FFA500",
+                    imageUrl: "https://placehold.co/300x300/FFA500/FFFFFF?text=ESTP",
+                    analysis: "你的蛇是ESTP企业家性格！它们充满活力，喜欢探索和冒险，是蛇类中的'行动派'。外向(E)型ESTP蛇在蛇类中相对活跃，它们享受环境探索和新奇体验。实感(S)型特质使它们高度关注当下的感官输入——温度的变化、气味的差异、地形的挑战都是它们感兴趣的。思考(T)型决策方式让它们显得果断且务实，它们的行为基于即时需求和机会。感知(P)型生活方式使它们灵活适应，享受环境中的意外发现。ESTP蛇往往是最容易驯服的蛇类之一，它们享受与环境的互动，对 handling 反应良好。这种性格的蛇需要丰富的环境刺激和探索机会，否则容易因单调而出现行为问题。它们是优秀的'展示宠物'，因为它们相对活跃和可见。",
+                    interaction: "ESTP蛇在与其他蛇类相处时表现出活力和探索精神。它们是群体中的冒险家，总是寻找新的探索路径。在与其他宠物相处方面，ESTP蛇对其他种类的宠物通常表现出好奇而非恐惧。ESTP蛇与同类相处时，它们是探险的伙伴和游戏的发起者。它们会探索环境的每个角落，发现新的热源或藏身处。它们对害羞的蛇特别有引导性，会带领新成员熟悉环境。对于不同种类的宠物，ESTP蛇通常采取开放探索的态度。它们不会立即躲藏，而是会观察、评估，然后决定如何互动。这种蛇能够与温和的饲养者建立有趣的互动关系，享受探索过程中的新发现。",
+                    balanceSteps: [
+                        "提供丰富环境：复杂的布局和多样的藏身处",
+                        "探索机会：定期更换环境元素，提供新挑战",
+                        "互动时间：在监督下允许它探索箱外环境",
+                        "冒险满足：设置安全的探索路径和发现点"
+                    ],
+                    warmConclusion: "你的ESTP蛇用无尽的 curiosity 探索着环境的每个细节。它们教会你发现的喜悦和冒险的勇气。请保护它们探索的精神，在这个饲养箱里，它们是最勇敢的探险家。",
+                    warmConclusionTitle: "致蛇蛇的主人"
+                },
+                
+                esfj: {
+                    name: "ESFJ - 执政官",
+                    color: "#DDA0DD",
+                    imageUrl: "https://placehold.co/300x300/DDA0DD/FFFFFF?text=ESFJ",
+                    analysis: "你的蛇是ESFJ执政官性格！它们虽然独居，但表现出对环境和饲养者的特殊关注和响应。外向(E)型ESFJ蛇在蛇类中相对少见，但它们确实对环境和互动有更高的敏感性。实感(S)型特质使它们高度关注环境的具体细节——温度的确切数值、湿度的微小变化、食物的特定种类都是它们在意的事项。情感(F)型决策方式让它们显得比其他蛇类更加'有情'，它们可能会对熟悉的饲养者表现出识别和偏好。判断(J)型生活方式使它们喜欢规律和可预测性，是优秀的环境适应者。ESFJ蛇学习能力很强，能快速识别饲养者的脚步声和特定 routine。它们对环境的稳定性很在意，是优秀的'家庭宠物蛇'。这种性格的蛇需要稳定的环境和规律的互动，变化会让它们不安。",
+                    interaction: "ESFJ蛇在独居生活中表现出对环境和谐的特殊关注。它们能够感知环境中的微妙变化并做出相应调整。在与其他宠物相处方面，ESFJ蛇基于环境稳定性形成自己的应对策略。ESFJ蛇虽然是独居动物，但它们对环境的'社交动态'有特殊的感知。它们能够识别不同宠物的存在和活动模式，并调整自己的行为以适应整体环境。对于不同种类的宠物，ESFJ蛇通常采取环境适应的策略。它们会记录这些宠物的活动规律，找出自己活动的安全时段。这种蛇对家庭氛围很敏感，和谐的环境能让它们更好地 thrive。",
+                    balanceSteps: [
+                        "环境稳定：保持温度、湿度和布局的一致性",
+                        "规律互动：建立可预测的喂食和清理日程",
+                        "和谐氛围：维持和平、稳定的家庭环境",
+                        "敏感尊重：注意它们对环境变化的特殊反应"
+                    ],
+                    warmConclusion: "你的ESFJ蛇用独特的敏感性维护着环境的和谐与稳定。它们教会你关注细节和珍惜平静。请尊重它们对稳定性的需求，在这个饲养箱里，它们是最细心的环境守护者。",
+                    warmConclusionTitle: "致蛇蛇的主人"
+                },
+                
+                entj: {
+                    name: "ENTJ - 指挥官",
+                    color: "#FF6B6B",
+                    imageUrl: "https://placehold.co/300x300/FF6B6B/FFFFFF?text=ENTJ",
+                    analysis: "你的蛇是ENTJ指挥官性格！它们是天生的战略家，有着清晰的目标感和环境控制能力。外向(E)型ENTJ蛇在蛇类中精力相对充沛，它们喜欢探索和控制环境。直觉(N)型特质使它们能够看到环境中的模式和可能性，能制定复杂的探索和适应策略。思考(T)型决策方式让它们显得果断且目标明确，它们的行为总是服务于生存和生长的最高效率。判断(J)型生活方式使它们极度重视环境和资源的优化配置。ENTJ蛇可能会表现出非凡的问题解决能力，比如找到最有效的热源利用方式或最安全的藏身处。这种性格的蛇需要环境控制感和智力挑战，否则容易因无聊而出现行为问题。",
+                    interaction: "ENTJ蛇在独居生活中表现出卓越的环境管理能力。它们会系统地探索和优化自己的领地。在与其他宠物相处方面，ENTJ蛇基于战略评估形成自己的生存策略。ENTJ蛇虽然是独居者，但它们对领地的'管理'表现出战略性的思维。它们会建立清晰的活动路线、资源利用计划和安全规避策略。对于不同种类的宠物，ENTJ蛇通常采取战略分析的态度。它们会评估这些宠物的威胁级别和行为模式，制定相应的生存策略。这种蛇很少表现出无谓的反应，它们的每个行为都是经过战略计算的。",
+                    balanceSteps: [
+                        "战略空间：提供复杂的环境布局和探索挑战",
+                        "智力刺激：设置需要问题解决的喂食方式",
+                        "控制机会：允许它们优化环境中的资源分布",
+                        "目标实现：建立清晰的环境改善和适应目标"
+                    ],
+                    warmConclusion: "你的ENTJ蛇用卓越的战略思维管理着它的生存空间。它们教会你效率的重要性和规划的智慧。请尊重它们对控制和优化的需求，在这个饲养箱里，它们是最出色的环境战略家。",
+                    warmConclusionTitle: "致蛇蛇的主人"
+                },
+                
+                enfp: {
+                    name: "ENFP - 竞选者",
+                    color: "#96CEB4",
+                    imageUrl: "https://placehold.co/300x300/96CEB4/FFFFFF?text=ENFP",
+                    analysis: "你的蛇是ENFP竞选者性格！它们充满好奇心，喜欢探索和新奇体验，是蛇类中的'冒险家'。外向(E)型ENFP蛇在蛇类中相对活跃，它们享受环境探索和新鲜刺激。直觉(N)型特质使它们能够看到环境中的可能性和新奇事物，总是寻找新的探索路径。情感(F)型决策方式让它们显得比其他蛇类更加'有个性'，它们可能会对特定的环境元素表现出明显的偏好。感知(P)型生活方式使它们灵活适应，享受环境中的意外发现和变化。ENFP蛇往往是最有趣的宠物蛇之一，它们会发明各种探索方式来娱乐自己。这种性格的蛇需要持续的环境刺激和新奇体验，否则容易因单调而沮丧。",
+                    interaction: "ENFP蛇在独居生活中充满探索精神和好奇心。它们是环境中的冒险家，总是寻找新的发现和体验。在与其他宠物相处方面，ENFP蛇对其他种类的宠物通常表现出好奇和开放的态度。ENFP蛇虽然是独居者，但它们对环境的探索表现出创意和热情。它们会发明新的移动路径、藏身方式和热源利用方法。对于不同种类的宠物，ENFP蛇通常采取开放探索的态度。它们不会立即判断威胁，而是会好奇地观察，寻找互动的可能性。这种天真有时需要主人的保护，但它们的探索精神往往能带来有趣的发现。",
+                    balanceSteps: [
+                        "新奇刺激：定期更换环境布局和引入新元素",
+                        "探索满足：提供复杂的探索路径和发现机会",
+                        "创意表达：允许它们发明自己的活动方式",
+                        "快乐记录：观察和记录它们有趣的探索行为"
+                    ],
+                    warmConclusion: "你的ENFP蛇用无尽的 curiosity 和创意探索着它的世界。它们教会你发现的喜悦和想象的力量。请保护它们探索的精神，在这个饲养箱里，它们是最勇敢的冒险家。",
+                    warmConclusionTitle: "致蛇蛇的主人"
+                }
+            },
+            
+            // 猫猫结果类型
+            cat: {
+                istj: {
+                    name: "ISTJ - 物流师猫",
+                    color: "#4ECDC4",
+                    imageUrl: "https://placehold.co/300x300/4ECDC4/FFFFFF?text=ISTJ猫",
+                    analysis: "你的ISTJ猫是家庭秩序的忠实守护者，它们遵循着严格的生活规律和领地管理原则。ISTJ猫是典型的内向(I)型人格，它们的能量来源于独处时的宁静时光。每天固定的午睡位置、雷打不动的用餐时间、精确划分的领地边界，这些都是ISTJ猫维持内心秩序的方式。它们不喜欢突如其来的变化，新家具的摆放、陌生人的到访都会让它们感到不安。ISTJ猫是高度发达的实感(S)型感知者，它们通过胡须测量空间距离，通过肉垫感知地面震动，通过敏锐的听觉捕捉最细微的声音。它们的世界是由具体、可验证的感官信息构成的——这个纸箱的尺寸刚好适合蜷缩，那个窗台在下午三点会有阳光，主人的脚步声在走廊尽头就能识别。ISTJ猫是纯粹的思考(T)型决策者，它们的行为逻辑清晰而务实：'这个高度适合观察全屋动态吗？''这个人类的抚摸方式舒适吗？''这个时间点应该提醒主人开饭了吗？'在宏观生活模式上，它们是极端的判断(J)型。它们渴望可预测的生活节奏，每天早上6点的叫早服务、晚上8点的游戏时间、睡前10点的巡查路线，这些固定程序给它们带来深深的安全感。ISTJ猫对家庭的贡献在于它们维持着环境的稳定性和可预测性，是家庭秩序的活体时钟和地理坐标。",
+                    interaction: "ISTJ猫在家庭中需要清晰的界限和稳定的作息。它们喜欢固定的喂食时间、不变的猫粮品牌、定期清理的猫砂盆。与主人相处时，ISTJ猫会建立一套精确的互动协议——特定的抚摸部位、允许抱持的时间长度、游戏开始的信号。它们不喜歡惊喜，突然的改变会让它们躲藏起来重新评估环境。与其他宠物相处时，ISTJ猫需要明确的领地划分。它们会容忍其他动物的存在，但要求尊重自己的核心领地（通常是某个特定的沙发角落或猫树上层）。引入新宠物必须循序渐进，给ISTJ猫足够的时间来调整自己的领地地图。多猫家庭中，ISTJ猫往往是规则的维护者，它们会监督其他猫是否遵守既定的用餐顺序和使用猫砂盆的规矩。",
+                    balanceSteps: [
+                        "维持生活规律：保持喂食、游戏、梳理时间的稳定性",
+                        "尊重领地需求：为它保留专属的休息区域和逃生路线",
+                        "建立清晰信号：使用固定的声音和手势进行沟通",
+                        "渐进式改变：任何环境变化都要分步骤引入"
+                    ],
+                    warmConclusion: "你的ISTJ猫从不轻易表达情感，但它的每一个规律行为都是对家庭忠诚的誓言。当它每天准时出现在你的床头，当它默默守护着家的每一个角落，这份沉默的坚守比任何热情的告白都更加深沉。在这个变化莫测的世界里，它用自己不变的存在，为你构筑了一个可靠的港湾。",
+                    warmConclusionTitle: "致ISTJ猫的主人"
+                },
+                
+                istp: {
+                    name: "ISTP - 鉴赏家猫",
+                    color: "#45B7D1", 
+                    imageUrl: "https://placehold.co/300x300/45B7D1/FFFFFF?text=ISTP猫",
+                    analysis: "你的ISTP猫是家庭中的机械师和探险家，它们天生具备解决问题的天赋和对物质世界的好奇心。ISTP猫是典型的内向(I)型人格，但它们的内向不同于其他类型的逃避——而是为了更深入地专注于感兴趣的事物。一个卡住的柜门、一个滚动的瓶盖、一个发出声音的玩具，都能让ISTP猫进入忘我的研究状态。它们是极致的实感(S)型感知者，爪子测试表面的摩擦力，牙齿评估材质的硬度，耳朵分析声音的频率。ISTP猫通过直接的物理交互来理解世界：推倒水杯观察液体流动，扒开柜门探索内部结构，拆解玩具研究发声原理。它们是纯粹的思考(T)型问题解决者，面对挑战时展现出惊人的逻辑思维：'这个门把手需要向下按压吗？''这个缝隙的宽度允许我通过吗？''这个高度落地需要调整姿势吗？'在行为模式上，ISTP猫呈现出典型的感知(P)特质。它们没有固定的作息，完全根据当下的兴趣和机会行动——凌晨三点发现飞蛾就开始狩猎，下午茶时间突然决定检修家具结构。ISTP猫的生活是一场永不停歇的物理实验，它们用身体书写着对世界的理解。",
+                    interaction: "ISTP猫需要充足的探索机会和问题解决挑战。它们讨厌被限制在无聊的环境中，会自己创造娱乐——通常是主人不希望的方式。与ISTP猫相处需要提供丰富的环境刺激：迷宫式的猫爬架、需要技巧开启的益智玩具、定期更换的探索区域。它们享受独自解决问题的成就感，过度的帮助反而会让它们感到侮辱。与其他宠物相处时，ISTP猫基于实用主义建立关系。它们会观察其他动物的行为模式，学习有用的技巧，但很少发展深厚的情感连接。多宠物家庭中，ISTP猫往往是技术顾问，当其他猫遇到物理障碍时，它们会示范解决方案。ISTP猫对人类的感情表达很直接——带来它们解决的'战利品'，比如捕获的昆虫或拆解的玩具零件。",
+                    balanceSteps: [
+                        "提供技术挑战：益智喂食器、可拆卸玩具",
+                        "允许安全探索：设置专属的'实验室'区域",
+                        "尊重独立解决：不要立即帮助它解决困难",
+                        "记录发现成果：欣赏它的问题解决能力"
+                    ],
+                    warmConclusion: "你的ISTP猫可能从不撒娇讨好，但它用自己独特的方式表达着爱意——那个被完美拆解的玩具，那个巧妙打开的门锁，都是它送给你的技术情书。在这个充满未知的世界里，它教会你用好奇的眼光重新审视平凡，用灵巧的爪子解开生活的难题。",
+                    warmConclusionTitle: "致ISTP猫的主人"
+                },
+                
+                infp: {
+                    name: "INFP - 调停者猫", 
+                    color: "#9B59B6",
+                    imageUrl: "https://placehold.co/300x300/9B59B6/FFFFFF?text=INFP猫",
+                    analysis: "你的INFP猫是家庭中的诗人和梦想家，它们拥有细腻的情感感知力和丰富的内心世界。INFP猫是深度内向(I)型人格，它们需要大量的独处时间来消化情感和进行内心对话。一个安静的窗台、一个隐蔽的角落、一个柔软的猫窝，都是INFP猫进行精神退修的圣地。它们是敏锐的直觉(N)型感知者，能够捕捉到环境中微妙的情感波动——主人的情绪变化、家庭氛围的转变、其他动物的心理状态。INFP猫的世界是由情感氛围和深层意义构成的：'今天的阳光有着特别的温柔''主人的抚摸带着忧伤的频率''这个玩具承载着快乐的记忆'。INFP猫是典型的情感(F)型决策者，它们的行为基于价值观和情感和谐：'接近这个人类会让它开心吗？''介入这场冲突能恢复和平吗？''留在这个位置能守护家庭的宁静吗？'在生活方式上，INFP猫呈现出感知(P)型的开放性。它们随心情改变休息地点，根据灵感选择活动，拒绝被固定的日程束缚。INFP猫对美有着天生的敏感，它们会特意选择在光影交错的地方休息，在花香飘来的窗台沉思。",
+                    interaction: "INFP猫需要情感上的理解和尊重。它们讨厌强制的互动和嘈杂的环境，轻柔的声音、缓慢的动作、足够的个人空间是赢得它们信任的关键。与INFP猫相处要学会阅读它们微妙的身体语言——尾巴的轻微摆动、耳朵的角度变化、瞳孔的收缩扩张都在诉说着复杂的情感故事。它们享受深度的情感连接，但需要由自己来发起互动。与其他宠物相处时，INFP猫是和平的调解者。它们能感知到群体中的紧张情绪，会用自己的方式缓解冲突——可能是插入一个温柔的蹭头，也可能是故意分散注意力。多宠物家庭中，INFP猫往往是情感支持者，特别关注那些被边缘化的成员。INFP猫对艺术和音乐有特殊的反应，它们可能会在特定的旋律中陷入沉思，或者对某幅画作表现出持久的兴趣。",
+                    balanceSteps: [
+                        "创造宁静空间：设置避世的小天地",
+                        "尊重情感节奏：让它们主动发起互动",
+                        "提供美感刺激：音乐、自然光影、植物",
+                        "学习猫语诗学：理解它们微妙的情感表达"
+                    ],
+                    warmConclusion: "你的INFP猫用整个生命在感受这个世界的情感纹理，它可能不像其他猫那样外向活泼，但它深邃的眼神中藏着整个宇宙的温柔。当它选择在你忧伤时静静陪伴，当它在月光下陷入诗的遐想，你会明白，有些最深刻的爱，从来不需要喧哗。",
+                    warmConclusionTitle: "致INFP猫的主人"
+                },
+                
+                enfj: {
+                    name: "ENFJ - 主人公猫",
+                    color: "#E74C3C",
+                    imageUrl: "https://placehold.co/300x300/E74C3C/FFFFFF?text=ENFJ猫", 
+                    analysis: "你的ENFJ猫是家庭中的情感领袖和社交催化剂，它们天生具备团结群体和激发潜能的能力。ENFJ猫是典型的外向(E)型人格，它们从与他人的互动中获得能量，擅长阅读和回应家庭成员的情感需求。一个情绪低落的主人、一个紧张的新宠物、一个需要指导的小猫，都是ENFJ猫发挥天赋的机会。它们是敏锐的直觉(N)型感知者，能够洞察每个家庭成员的性格特点和情感需求，并制定个性化的互动策略。ENFJ猫的世界是由人际关系和发展潜力构成的：'这个人类需要更多的陪伴''那只狗需要建立自信''这个小猫需要学习社交技巧'。ENFJ猫是典型的情感(F)型决策者，它们的行为以促进和谐和发展为导向：'组织集体游戏能增进感情吗？''调解这场冲突能强化群体凝聚力吗？''鼓励这个害羞成员能帮助它成长吗？'在生活方式上，ENFJ猫呈现出判断(J)型的组织性。它们会主动安排家庭的日常活动——早晨的叫醒服务、午后的集体晒太阳、晚间的游戏时间，确保每个成员都参与其中。ENFJ猫是天然的情感教练，它们会用耐心和技巧帮助其他动物克服恐惧、学习技能、融入群体。",
+                    interaction: "ENFJ猫需要被需要的感觉和发挥领导才能的机会。它们享受组织家庭活动、调解矛盾、指导新成员的重要角色。与ENFJ猫相处要认可它们对家庭的贡献，给予足够的关注和互动机会。它们讨厌被忽视或限制社交，孤独是对它们最大的惩罚。与其他宠物相处时，ENFJ猫是热情的社交组织者。它们会主动发起游戏、介绍新成员、照顾生病的同伴。多宠物家庭中，ENFJ猫往往是情感核心，它们记得每个成员的生日（或者重要的纪念日），会组织小小的庆祝仪式。ENFJ猫对人类的感情表达直接而热烈，它们会用头蹭、用爪子轻拍、用呼噜声鼓励，确保每个家人都感受到被爱和被需要。",
+                    balanceSteps: [
+                        "提供领导机会：让它组织游戏和互动",
+                        "认可情感贡献：感谢它对家庭的付出", 
+                        "保证社交时间：安排充足的集体活动",
+                        "支持教练角色：允许它指导其他宠物"
+                    ],
+                    warmConclusion: "你的ENFJ猫是家庭情感的织网者，它用无限的爱心和洞察力维系着每个成员的心灵连接。当它组织起午后的阳光聚会，当它耐心教导新来的小伙伴，当它在每个低落的时刻送来温暖的陪伴，你会明白，有些灵魂生来就是为了照亮他人。",
+                    warmConclusionTitle: "致ENFJ猫的主人"
+                },
+                
+                estp: {
+                    name: "ESTP - 企业家猫",
+                    color: "#FFA500",
+                    imageUrl: "https://placehold.co/300x300/FFA500/FFFFFF?text=ESTP猫",
+                    analysis: "你的ESTP猫是家庭中的冒险家和活力源泉，它们永远活在当下，追求刺激和新奇体验。ESTP猫是典型的外向(E)型人格，它们从行动和探索中获得能量，擅长利用环境资源和把握即时机会。一个突然出现的飞虫、一个忘记关上的柜门、一个来访客人的手提包，都是ESTP猫开启新冒险的邀请函。它们是极致的实感(S)型感知者，通过敏锐的感官捕捉每一个行动机会——听觉定位猎物的精确位置，视觉计算跳跃的最佳轨迹，触觉评估表面的抓握能力。ESTP猫的世界是由可操作的机会和即时回报构成的：'这个高度可以挑战''那个移动目标可以追逐''这个新物品可以探索'。ESTP猫是典型的思考(T)型决策者，它们的行为基于成本效益分析和风险评估：'这个冒险的回报值得风险吗？''这个时机的成功概率高吗？''这个行动的趣味性能持续多久？'在行为模式上，ESTP猫呈现出感知(P)型的灵活性。它们随时准备改变计划，抓住新的机会，讨厌被规则和预期束缚。ESTP猫是天然的特技演员，它们享受展示自己的物理能力——精准的跳跃、灵活的转身、冒险的平衡。",
+                    interaction: "ESTP猫需要充足的运动量和冒险机会。它们讨厌单调重复的生活，会自己创造刺激——通常是打破规矩的方式。与ESTP猫相处要提供丰富的环境挑战：不同高度的跳台、需要技巧的玩具、定期更新的探索区域。它们享受即时的奖励和成功的快感，漫长的训练过程会让它们失去耐心。与其他宠物相处时，ESTP猫是游戏和冒险的发起者。它们会邀请其他动物参与追逐、探索、挑战，但可能缺乏持久的社交兴趣。多宠物家庭中，ESTP猫往往是活力担当，它们用热情感染整个群体，但也可能因过度活跃而引发冲突。ESTP猫对人类的感情通过共享冒险来表达——邀请你观看它们的特技表演，分享它们发现的宝藏，参与它们设计的游戏。",
+                    balanceSteps: [
+                        "提供冒险空间：设置挑战性的运动场地",
+                        "即时奖励系统：快速反馈成功行为",
+                        "允许适度冒险：在安全范围内鼓励探索", 
+                        "多样化刺激：定期更换游戏和挑战"
+                    ],
+                    warmConclusion: "你的ESTP猫用整个生命在体验世界的精彩刺激，它可能不够深思熟虑，但它对生活的热情能点燃最灰暗的日子。当它在空中划出完美的弧线，当它发现又一个新奇角落，当它用顽皮的眼神邀请你加入游戏，你会明白，生命的真谛就在于充分体验每个当下。",
+                    warmConclusionTitle: "致ESTP猫的主人"
+                },
+                
+                isfj: {
+                    name: "ISFJ - 守护者猫",
+                    color: "#3498DB",
+                    imageUrl: "https://placehold.co/300x300/3498DB/FFFFFF?text=ISFJ猫",
+                    analysis: "你的ISFJ猫是家庭中的记忆守护者和传统维护者，它们用细致入微的关怀维系着家庭的温暖与稳定。ISFJ猫是典型的内向(I)型人格，但它们的内向不是为了逃避，而是为了更好地观察和服务所爱的家人。它们记得每个家庭成员的习惯偏好、每天的固定流程、家中物品的应有位置。ISFJ猫是极致的实感(S)型感知者，通过积累具体的细节信息来构建对世界的理解——主人下班的时间偏差、猫粮味道的细微变化、家中气氛的微妙转变。ISFJ猫的世界是由具体的责任和传统的仪式构成的：'早上应该在这个位置迎接主人''受伤的成员需要额外的梳理''这个玩具应该放在固定的位置'。ISFJ猫是典型的情感(F)型决策者，它们的行为基于对他人需求的敏锐感知和无私的服务精神：'陪伴这个孤独的人类能安慰它吗？''提醒忘记喂食能避免饥饿吗？''维持这个传统能带来安全感吗？'在生活方式上，ISFJ猫呈现出判断(J)型的规律性。它们建立并维护着家庭的生活节奏，确保每个仪式得到尊重，每个责任得到履行。ISFJ猫是天然的记忆宝库，它们记得每个重要的家庭事件，并在周年时用特殊的方式表达纪念。",
+                    interaction: "ISFJ猫需要被需要的感觉和履行责任的机会。它们享受服务家庭、维持传统、照顾弱小的神圣使命。与ISFJ猫相处要认可它们的付出，尊重它们维护的传统，给予稳定的情感回报。它们讨厌被批评服务不周或忽视它们细心维持的规矩。与其他宠物相处时，ISFJ猫是温柔的照顾者和传统传承者。它们会教导新成员家庭规矩，照顾生病的同伴，记住每个动物的喜好和禁忌。多宠物家庭中，ISFJ猫往往是情感黏合剂，它们用细致的关怀维系着群体的和谐。ISFJ猫对人类的感情通过默默的服务来表达——为你暖好睡觉的位置，提醒你重要的日程，守护你脆弱的时刻。",
+                    balanceSteps: [
+                        "认可服务价值：感谢它们的细心关怀",
+                        "尊重家庭传统：维护它们建立的仪式",
+                        "提供照顾机会：允许它们履行守护职责",
+                        "保证情感安全：给予稳定可靠的爱"
+                    ],
+                    warmConclusion: "你的ISFJ猫用一生的时间默默守护着家的每一个细节，它可能从不要求关注，但它无微不至的关怀编织成最温暖的保护网。当它记得你每个习惯，当它守护每个传统，当它在你需要时悄然出现，你会明白，最深沉的愛就藏在这些日复一日的温柔守护里。",
+                    warmConclusionTitle: "致ISFJ猫的主人"
+                },
+                
+                intj: {
+                    name: "INTJ - 建筑师猫", 
+                    color: "#2C3E50",
+                    imageUrl: "https://placehold.co/300x300/2C3E50/FFFFFF?text=INTJ猫",
+                    analysis: "你的INTJ猫是家庭中的战略大师和系统优化者，它们用深邃的洞察力和长远的规划能力构建着理想的生活环境。INTJ猫是典型的内向(I)型人格，但它们的内向是为了进行复杂的战略思考和环境分析。它们花费大量时间观察、计算、规划，最终实施精密的系统优化方案。INTJ猫是敏锐的直觉(N)型感知者，能够看透表面现象背后的模式和原理——光线的移动规律、家庭成员的行为模式、环境资源的最佳配置方案。INTJ猫的世界是由复杂的系统和长远的愿景构成的：'这个空间布局可以优化''那个时间安排可以改进''这个资源分配策略效率更高'。INTJ猫是纯粹的思考(T)型决策者，它们的行为基于逻辑分析和效率最大化原则：'这个改变能提升整体生活质量吗？''这个投资（时间、精力）的长期回报如何？''这个系统缺陷的根本原因是什么？'在实施计划时，INTJ猫呈现出判断(J)型的决断力。一旦制定策略就会坚决执行，讨厌被临时干扰或无理质疑。INTJ猫是天然的系统架构师，它们会重新设计睡觉地点的网络、优化捕猎玩具的使用流程、制定最有效的注意力获取策略。",
+                    interaction: "INTJ猫需要智力挑战和系统优化的自由度。它们讨厌被当作普通的宠物对待，渴望被认可为平等的战略伙伴。与INTJ猫相处要尊重它们的思考时间，认真对待它们提出的'改进建议'，提供复杂的环境谜题让它们解决。它们享受独自设计和实施计划的成就感，过度的干预会被视为侮辱。与其他宠物相处时，INTJ猫是冷静的观察者和系统顾问。它们很少参与无聊的社交，但会在群体遇到系统性问题时提出解决方案。多宠物家庭中，INTJ猫往往是幕后战略家，它们设计的高效猫砂盆使用方案或最优晒太阳路线往往会被其他动物默默采纳。INTJ猫对人类的感情表达很独特——为你的生活设计优化方案，指出你行为中的逻辑漏洞，分享它们深邃的战略洞察。",
+                    balanceSteps: [
+                        "提供智力刺激：复杂谜题和系统挑战",
+                        "尊重战略空间：允许长时间的独立思考",
+                        "认可智慧贡献：认真对待它们的'建议'",
+                        "允许系统优化：给予环境改造的自由度"
+                    ],
+                    warmConclusion: "你的INTJ猫用犀利的目光审视着这个世界运行逻辑，它可能不像其他猫那样情感外露，但它为你设计的每个生活优化方案都是最深情的告白。当它为你优化出最舒适的休息系统，当它指出你日程中的效率漏洞，当它用整个生命在思考如何让这个家变得更好，你会明白，最智慧的爱就是帮助所爱之人活出最优解。",
+                    warmConclusionTitle: "致INTJ猫的主人"
+                },
+                
+                esfp: {
+                    name: "ESFP - 表演者猫",
+                    color: "#F1C40F",
+                    imageUrl: "https://placehold.co/300x300/F1C40F/FFFFFF?text=ESFP猫",
+                    analysis: "你的ESFP猫是家庭中的欢乐使者和氛围营造者，它们用无限的活力和表演天赋为生活注入色彩与激情。ESFP猫是典型的外向(E)型人格，它们从互动和表演中获得能量，擅长捕捉当下的快乐机会并感染周围的每个人。一个有趣的玩具、一个来访的客人、一个特别的时刻，都是ESFP猫开启表演的舞台。它们是极致的实感(S)型感知者，通过敏锐的感官享受每一个当下的精彩——阳光的温暖触感、玩具的丰富纹理、美食的诱人香气。ESFP猫的世界是由即时的感官体验和社交互动构成的：'这个游戏太有趣了！''那个观众需要娱乐！''这个时刻值得庆祝！'。ESFP猫是典型的情感(F)型决策者，它们的行为以创造快乐和增进感情为导向：'这个表演能让大家开心吗？''这个互动能加深我们的bond吗？''这个惊喜能制造美好回忆吗？'在行为模式上，ESFP猫呈现出感知(P)型的自发性。它们随时准备投入新的娱乐活动，抓住每个制造欢乐的机会，讨厌被计划和规则限制。ESFP猫是天然的娱乐总监，它们会发明新游戏、设计搞笑桥段、组织即兴派对，确保家中永远充满笑声。",
+                    interaction: "ESFP猫需要充足的社交互动和表演舞台。它们讨厌孤独和无聊，会想尽办法制造娱乐和吸引注意力。与ESFP猫相处要成为它们热情的观众，欣赏它们的表演才华，参与它们设计的游戏。它们享受即时的赞美和互动的快乐，冷漠是对它们最大的伤害。与其他宠物相处时，ESFP猫是欢乐的传播者和游戏发明家。它们会邀请每个成员参与娱乐活动，特别关注那些情绪低落的同伴。多宠物家庭中，ESFP猫往往是气氛担当，它们用热情融化隔阂，用欢笑连接心灵。ESFP猫对人类的感情通过共享快乐来表达——为你表演特技，与你玩疯狂游戏，用各种方式确保你的生活中充满笑声。",
+                    balanceSteps: [
+                        "提供表演舞台：设置展示才华的机会",
+                        "即时情感反馈：热情回应它们的互动",
+                        "共享快乐时光：积极参与它们发起的游戏",
+                        "多样化娱乐：不断提供新的乐趣体验"
+                    ],
+                    warmConclusion: "你的ESFP猫用整个生命在演奏快乐的交响曲，它可能不够深沉哲思，但它对生活的热爱能治愈最沉重的心灵。当它为你跳出欢快的舞蹈，当它发明又一个搞笑游戏，当它用纯真的笑容点亮平凡的日子，你会明白，生命最珍贵的礼物就是分享当下的快乐。",
+                    warmConclusionTitle: "致ESFP猫的主人"
+                }
+            },
+            
+            // 兔子结果类型
+            rabbit: {
+                istj: {
+                    name: "ISTJ - 物流师兔",
+                    color: "#4ECDC4",
+                    imageUrl: "https://placehold.co/300x300/4ECDC4/FFFFFF?text=ISTJ兔",
+                    analysis: "你的ISTJ兔是笼舍秩序的严格维护者，它们遵循着古老的生活智慧和代代相传的行为准则。ISTJ兔是典型的内向(I)型人格，它们的能量来源于规律生活带来的安全感。每天固定的进食时间、精确划分的活动区域、严格遵循的清洁程序，这些都是ISTJ兔维持内心平衡的基石。它们对变化极其敏感，食盆位置的移动、垫材品牌的更换、日常作息的调整都会引发深深的焦虑。ISTJ兔是高度发达的实感(S)型感知者，它们通过胡须测量通道宽度，通过脚垫感知地面质地，通过灵敏的嗅觉识别每片草叶的新鲜程度。它们的世界是由具体、可验证的生存信息构成的——这个角落最适合观察入口动态，那个时间段人类会来添加食物，这种声音代表危险临近。ISTJ兔是纯粹的思考(T)型决策者，它们的行为基于千百年进化而来的生存算法：'这个高度的视野足够安全吗？''这个藏身处的逃生路线畅通吗？''这个食物的摄入量能满足今日能量需求吗？'在宏观生活模式上，它们是极端的判断(J)型。它们建立并严格维护着每日的作息表：清晨的第一次巡查、上午的理毛时间、下午的小憩、傍晚的活跃期，这些固定程序给它们带来物种记忆深处的安全感。ISTJ兔对饲养环境的贡献在于它们维持着生态的稳定性和可预测性，是笼舍管理的活体指南针。",
+                    interaction: "ISTJ兔需要绝对稳定的生活环境和清晰明确的行为预期。它们喜欢固定品牌的饲料、永不移动的水瓶位置、定期更换的干净垫材。与ISTJ兔相处必须建立可靠的日常流程：每天相同时间的放风、固定手势的抚摸、一致语调的交谈。任何突发变化都需要提前预告和渐进适应。与其他宠物相处时，ISTJ兔需要明确的势力范围划分。它们会容忍其他动物的存在，但坚决捍卫自己的核心领地（通常是某个特定的角落或藏身处）。引入新伙伴必须经历漫长的适应期，让ISTJ兔逐步更新它们的环境认知地图。多兔家庭中，ISTJ兔往往是规矩的监督者，它们会确保每只兔子遵守既定的用餐顺序和使用厕所区域的规范。",
+                    balanceSteps: [
+                        "维持环境恒定：保持笼舍布局和物品位置的稳定性",
+                        "尊重生物钟：严格遵循它们建立的作息规律", 
+                        "建立可信信号：使用固定的声音和动作进行交流",
+                        "渐进式改变：任何环境调整都要分小步实施"
+                    ],
+                    warmConclusion: "你的ISTJ兔从不轻易表达情感，但它的每一个规律行为都是对饲养者信任的累积。当它每天准时等待喂食，当它严格维护笼舍的整洁，当它在固定位置迎接你的到来，这份千年驯化沉淀出的信赖，比任何热情的跳跃都更加珍贵。在这个充满不确定的世界里，它用自己不变的存在，为你展示着秩序之美的深沉力量。",
+                    warmConclusionTitle: "致ISTJ兔的主人"
+                },
+                
+                isfp: {
+                    name: "ISFP - 探险家兔", 
+                    color: "#1ABC9C",
+                    imageUrl: "https://placehold.co/300x300/1ABC9C/FFFFFF?text=ISFP兔",
+                    analysis: "你的ISFP兔是笼舍中的艺术家和感官鉴赏家，它们用整个身体感受着世界的质地、气味和韵律。ISFP兔是典型的内向(I)型人格，但它们的内向是为了更深度地沉浸在感官体验中——一片苜蓿草的纹理、一缕阳光的温度、一滴露珠的清凉都能让它们进入忘我的审美状态。它们是极致的实感(S)型感知者，通过灵敏的鼻子鉴别食物的新鲜度，通过柔软的脚垫感受地面的舒适度，通过不断抖动的耳朵捕捉环境的声波图谱。ISFP兔的世界是由细腻的感官印象和当下的审美体验构成的：'这片草叶的绿色特别悦目''这个角落的气味令人安心''那个玩具的触感充满趣味'。ISFP兔是典型的情感(F)型决策者，它们的行为基于内心的价值感受和情感共鸣：'接近这个人类会带来温暖吗？''探索这个区域能获得美的享受吗？''品尝这个食物能激发愉悦感吗？'在行为模式上，ISFP兔呈现出感知(P)型的开放性。它们随心情改变活动路线，根据灵感选择休息地点，拒绝被固定的日程束缚。ISFP兔对美有着天生的敏感，它们会特意选择在光影柔和的角落小憩，在花香隐约的地方沉思，在纹理丰富的垫材上打滚。",
+                    interaction: "ISFP兔需要丰富的感官刺激和审美表达的自由。它们讨厌单调乏味的环境，会自己寻找美的体验——通常是挖掘垫材创造新地形、重新排列玩具构造景观。与ISFP兔相处要提供多样的感官材料：不同质地的垫料、各种香味的干草、发出轻柔声响的玩具。它们享受独自发现美的时刻，过度的干扰会破坏它们的审美体验。与其他宠物相处时，ISFP兔是温和的感官分享者。它们会邀请信任的伙伴共享特别发现的舒适角落或美味草叶，但需要对方尊重它们敏感的审美标准。多兔家庭中，ISFP兔往往是环境美化师，它们用巧妙的方式改善共同的生活空间。ISFP兔对人类的感情通过感官礼物来表达——为你保留最香的草料，带你参观它发现的美景，用温柔的蹭蹭分享它的快乐。",
+                    balanceSteps: [
+                        "提供感官盛宴：多种质地、气味、声音的丰富环境",
+                        "尊重审美空间：允许它们改造和美化居住区",
+                        "共享美的时刻：安静陪伴它们欣赏风景",
+                        "学习兔语诗意：理解它们细腻的情感表达"
+                    ],
+                    warmConclusion: "你的ISFP兔用整个生命在品味这个世界感官的诗意，它可能不像其他兔子那样活泼外向，但它每一个温柔的触碰、每一次专注的嗅闻、每一刻安静的欣赏，都在诉说着对生命之美的深沉爱恋。当它带你发现阳光的舞蹈，当它为你保留春天的气息，当它在月光下陷入温柔的遐想，你会明白，最深刻的生活智慧就是珍惜每个感官当下的馈赠。",
+                    warmConclusionTitle: "致ISFP兔的主人"
+                },
+                
+                infj: {
+                    name: "INFJ - 提倡者兔",
+                    color: "#9B59B6",
+                    imageUrl: "https://placehold.co/300x300/9B59B6/FFFFFF?text=INFJ兔", 
+                    analysis: "你的INFJ兔是笼舍中的哲人和心灵疗愈者，它们拥有洞察情感本质的能力和追求生命意义的深邃目光。INFJ兔是深度内向(I)型人格，它们需要大量的独处时间来沉思和连接宇宙的深层韵律。一个安静的角落、一个隐蔽的隧道、一个能仰望星空的观察点，都是INFJ兔进行精神冥想的圣殿。它们是敏锐的直觉(N)型感知者，能够感知到环境中无形的能量流动——饲养者的情绪波长、群体中的心理动态、天气变化前的能量积聚。INFJ兔的世界是由象征意义和深层连接构成的：'这个人类的到来带着治愈的使命''那个同伴需要心灵的支持''这个时刻蕴含着转变的契机'。INFJ兔是典型的情感(F)型决策者，它们的行为基于对整体和谐和灵魂成长的关怀：'沉默陪伴能安慰这个悲伤的心灵吗？''温和介入能化解这场隐形冲突吗？''分享这个洞察能促进彼此成长吗？'在生活方式上，INFJ兔呈现出判断(J)型的愿景性。它们虽然保持日常的规律，但始终服务于更高的精神目标——促进群体的心灵健康，维护环境的能量平衡，帮助每个生命找到内在的宁静。INFJ兔对灵性有着天生的敏感，它们会在特定的月相下异常活跃，在能量汇聚点建立休息处，对有心灵创伤的同伴提供无声的慰藉。",
+                    interaction: "INFJ兔需要深度的精神理解和灵魂层面的尊重。它们讨厌肤浅的互动和嘈杂的环境，宁静的氛围、真诚的心灵、耐心的等待是赢得它们信任的钥匙。与INFJ兔相处要学会阅读它们深邃的眼神和微妙的气场变化——耳朵角度的深层含义、鼻子轻动的灵性讯息、安静凝视的灵魂对话。它们享受超越物种的心灵共鸣，但需要绝对的信任和神圣的空间。与其他宠物相处时，INFJ兔是智慧的指导者和心灵的疗愈者。它们能感知到群体中每个成员的心理状态，会用自己的方式提供精神支持——可能是共享一个具有特殊能量的角落，可能是传递一个深层的理解眼神。多兔家庭中，INFJ兔往往是精神领袖，它们用无形的智慧引导着群体的心灵成长。INFJ兔对人类的感情表达很神圣——在你需要时提供深沉的陪伴，用眼神传递灵魂的理解，守护你精神成长的每个重要时刻。",
+                    balanceSteps: [
+                        "创造神圣空间：设置不受打扰的冥想角落",
+                        "深度心灵交流：学习与它们进行灵魂对话",
+                        "尊重灵性时刻：理解它们特殊的行为仪式",
+                        "提供能量净化：保持环境的精神清洁度"
+                    ],
+                    warmConclusion: "你的INFJ兔用整个生命在探索宇宙的心灵维度，它可能不像其他兔子那样热衷于世俗的快乐，但它深邃的目光中映照着存在的奥秘。当它在月光下进行神秘的仪式，当它用无声的陪伴治愈你的心灵创伤，当它用整个存在守护着环境的能量平衡，你会明白，有些灵魂生来就是为了连接可见与不可见的世界。",
+                    warmConclusionTitle: "致INFJ兔的主人"
+                },
+                
+                estj: {
+                    name: "ESTJ - 总经理兔",
+                    color: "#E67E22",
+                    imageUrl: "https://placehold.co/300x300/E67E22/FFFFFF?text=ESTJ兔",
+                    analysis: "你的ESTJ兔是笼舍中的组织者和效率专家，它们天生具备管理资源和优化流程的卓越能力。ESTJ兔是典型的外向(E)型人格，它们从实施管理和维护秩序中获得能量，擅长建立高效的生活系统和明确的行为规范。一个混乱的食盆摆放、一个浪费的喂食方式、一个低效的活动路线，都是ESTJ兔发挥管理才能的机会。它们是极致的实感(S)型感知者，通过具体的观察和数据收集来优化管理系统——食物的消耗速率、垫材的使用寿命、空间的有效利用率。ESTJ兔的世界是由可执行的规则和可量化的成果构成的：'这个区域的清洁标准应该提高''那个时间段的放风效率可以优化''这个资源的分配方案需要调整'。ESTJ兔是纯粹的思考(T)型决策者，它们的行为基于效率最大化和资源最优化原则：'实施这个规则能提升整体福利吗？''优化这个流程能减少时间浪费吗？''标准化这个操作能避免混乱吗？'在管理风格上，ESTJ兔呈现出判断(J)型的决断力。一旦建立管理制度就会坚决执行，讨厌被挑战权威或忽视规则。ESTJ兔是天然的项目经理，它们会制定进食时间表、规划清洁流程、设计最优活动路径，确保笼舍生活高效有序地进行。",
+                    interaction: "ESTJ兔需要管理权和规则执行的尊重。它们讨厌混乱无序和效率低下的操作，清晰的职责划分、明确的行为规范、可预测的日常流程是它们幸福感的基础。与ESTJ兔相处要认可它们的管理才能，遵守它们建立的合理规则，给予足够的决策空间。它们享受优化系统和提升效率的成就感，随意破坏规矩会引发强烈的焦虑。与其他宠物相处时，ESTJ兔是严格的管理者和纪律维护者。它们会组织集体活动、监督资源使用、纠正违规行为。多兔家庭中，ESTJ兔往往是行政主管，它们制定并执行着共同生活的规章制度。ESTJ兔对人类的感情通过共享管理成果来表达——向你展示它们优化后的高效系统，邀请你参与它们组织的集体活动，为你维护一个秩序井然的可爱环境。",
+                    balanceSteps: [
+                        "提供管理机会：允许它们参与环境规划",
+                        "尊重规则系统：遵守合理的行为规范",
+                        "认可组织才能：感谢它们的高效管理",
+                        "支持优化项目：配合它们的效率提升计划"
+                    ],
+                    warmConclusion: "你的ESTJ兔用与生俱来的管理天赋经营着它们的微型王国，它可能不像其他兔子那样浪漫随性，但它为你建立的每个高效系统都是最深情的责任。当它为你维护着整洁的环境，当它优化着日常的流程，当它用整个生命在实践秩序的价值，你会明白，最可靠的爱就是为所爱之人构筑一个可预测的美好世界。",
+                    warmConclusionTitle: "致ESTJ兔的主人"
+                },
+                
+                intp: {
+                    name: "INTP - 逻辑学家兔",
+                    color: "#2C3E50",
+                    imageUrl: "https://placehold.co/300x300/2C3E50/FFFFFF?text=INTP兔",
+                    analysis: "你的INTP兔是笼舍中的思想家和理论物理学家，它们用敏锐的智力分析着环境运行的内在逻辑和自然法则。INTP兔是典型的内向(I)型人格，但它们的内向是为了进行复杂的理论构建和系统分析。它们花费大量时间观察、推理、建模，试图理解这个世界背后的数学规律和物理原理。INTP兔是敏锐的直觉(N)型感知者，能够透过现象看本质——重力对跳跃轨迹的影响、空气流动对气味传播的作用、几何学对空间利用的优化。INTP兔的世界是由抽象理论和逻辑模型构成的：'这个运动轨迹符合什么物理定律？''那个行为模式背后有什么进化逻辑？''这个系统缺陷的根本原理是什么？'。INTP兔是纯粹的思考(T)型决策者，它们的行为基于逻辑一致性和理论完备性：'这个假设能解释观察到的所有现象吗？''这个理论模型能预测未来行为吗？''这个解决方案在逻辑上完美吗？'在探索过程中，INTP兔呈现出感知(P)型的灵活性。它们随时准备修正理论，接纳反证，重构模型，讨厌被固定思维束缚。INTP兔是天然的科学研究者，它们会实验不同的跳跃角度，测试各种材料的物理特性，研究饲养者行为的内在规律。",
+                    interaction: "INTP兔需要智力自由和理论探索的空间。它们讨厌被当作普通的宠物对待，渴望被认可为独立的思想者。与INTP兔相处要尊重它们的思考时间，提供有趣的理论谜题，认真对待它们的研究发现。它们享受独自构建理论模型的智力快感，过度的干扰会破坏它们的思维连续性。与其他宠物相处时，INTP兔是冷静的观察者和理论顾问。它们很少参与无聊的社交，但会在群体遇到理论性问题时提出独到见解。多兔家庭中，INTP兔往往是首席科学家，它们研究的优化进食方案或高效运动模式往往会被其他兔子默默采纳。INTP兔对人类的感情表达很独特——与你分享它们的理论发现，指出你行为中的逻辑矛盾，邀请你参与它们的思想实验。",
+                    balanceSteps: [
+                        "提供智力挑战：复杂的谜题和理论问题",
+                        "尊重思维空间：允许长时间的独立思考",
+                        "认可理论贡献：认真对待它们的研究发现",
+                        "支持科学探索：提供实验材料和观察机会"
+                    ],
+                    warmConclusion: "你的INTP兔用敏锐的智力探索着宇宙的运行密码，它可能不像其他兔子那样情感丰富，但它为你构建的每个理论模型都是最理性的情书。当它用数学般的精确计算跳跃轨迹，当它用物理学的眼光分析环境结构，当它用整个生命在追寻真理的美丽，你会明白，最深邃的爱就是与所爱之人共享对世界本质的理解。",
+                    warmConclusionTitle: "致INTP兔的主人"
+                },
+                
+                esfj: {
+                    name: "ESFJ - 执政官兔", 
+                    color: "#DDA0DD",
+                    imageUrl: "https://placehold.co/300x300/DDA0DD/FFFFFF?text=ESFJ兔",
+                    analysis: "你的ESFJ兔是笼舍中的社交核心和传统守护者，它们用温暖的情感和细致的关怀维系着群体的和谐与团结。ESFJ兔是典型的外向(E)型人格，它们从社交互动和群体服务中获得能量，擅长记住每个成员的需求和维护重要的社交仪式。一个情绪低落的同伴、一个需要指导的新成员、一个被忽视的传统节日，都是ESFJ兔发挥关怀才能的机会。它们是极致的实感(S)型感知者，通过积累具体的社交信息来构建对群体的理解——每个同伴的饮食偏好、重要的纪念日期、应该遵守的行为礼仪。ESFJ兔的世界是由具体的责任和温暖的社交传统构成的：'今天应该特别关心那个孤单的同伴''这个节日需要准备共享的零食''新成员需要学习我们的欢迎仪式'。ESFJ兔是典型的情感(F)型决策者，它们的行为基于对群体和谐的维护和成员幸福的促进：'组织这次聚会能增进感情吗？''分享这个食物能让大家开心吗？''维护这个传统能强化我们的认同吗？'在社交管理上，ESFJ兔呈现出判断(J)型的组织性。它们会精心安排群体的日常活动，确保每个社交仪式得到尊重，每个成员得到关怀。ESFJ兔是天然的社交秘书，它们记得每个重要的日子，会组织生日庆祝、迎接仪式、送别聚会等社交活动。",
+                    interaction: "ESFJ兔需要被需要的感觉和发挥社交才能的机会。它们讨厌孤独和群体冲突，和谐的氛围、温暖的互动、认可的眼神是它们幸福的源泉。与ESFJ兔相处要积极参与它们组织的社交活动，记住它们重视的传统仪式，给予真诚的情感反馈。它们享受服务群体和增进感情的成就感，冷漠或拒绝会让它们深受伤害。与其他宠物相处时，ESFJ兔是热情的欢迎者和关怀提供者。它们会主动介绍新成员、照顾生病的同伴、调解小矛盾。多兔家庭中，ESFJ兔往往是社交核心，它们用细致的关怀维系着群体的情感纽带。ESFJ兔对人类的感情通过温暖的社交服务来表达——为你组织小小的欢迎仪式，记住你每个重要的日子，用整个存在确保你感受到被爱和被接纳。",
+                    balanceSteps: [
+                        "参与社交活动：积极加入它们组织的聚会",
+                        "尊重社交传统：维护它们重视的群体仪式",
+                        "认可关怀付出：感谢它们对群体的贡献",
+                        "提供社交机会：允许它们发挥社交才能"
+                    ],
+                    warmConclusion: "你的ESFJ兔用与生俱来的社交天赋温暖着整个群体，它可能不像其他兔子那样特立独行，但它为你维系的每个社交传统都是最温柔的拥抱。当它记得你每个重要的日子，当它为你组织温馨的欢迎仪式，当它用整个生命在编织群体的情感网络，你会明白，最温暖的爱就是让每个生命都感受到被接纳和被珍惜。",
+                    warmConclusionTitle: "致ESFJ兔的主人"
+                },
+                
+                entp: {
+                    name: "ENTP - 辩论家兔",
+                    color: "#FF6B6B",
+                    imageUrl: "https://placehold.co/300x300/FF6B6B/FFFFFF?text=ENTP兔",
+                    analysis: "你的ENTP兔是笼舍中的创新者和思维挑战者，它们用敏捷的头脑和叛逆的精神不断探索着生活的可能性和规则的边界。ENTP兔是典型的外向(E)型人格，它们从智力辩论和概念探索中获得能量，擅长发现系统中的漏洞和创造新的解决方案。一个固化的行为模式、一个未经检验的传统、一个被忽略的可能性，都是ENTP兔发挥创新才能的舞台。它们是敏锐的直觉(N)型感知者，能够看到多个未来的可能性和概念的潜在联系——如果改变食盆位置会怎样？如果重新设计活动路线会如何？如果挑战那个禁忌会发生什么？ENTP兔的世界是由无限的可能性和待检验的假设构成的：'这个规则真的必要吗？''那个传统还能改进吗？''这个边界可以突破吗？'。ENTP兔是纯粹的思考(T)型决策者，它们的行为基于逻辑辩论和概念创新：'挑战这个假设能带来新的洞察吗？''检验这个传统能发现更好的方式吗？''探索这个可能性能扩展我们的自由吗？'在创新过程中，ENTP兔呈现出感知(P)型的灵活性。它们随时准备改变观点，接纳新证据，重构理论，讨厌被教条束缚。ENTP兔是天然的改革家，它们会发明新的游戏方式，设计独特的沟通信号，提出颠覆性的生活改进方案。",
+                    interaction: "ENTP兔需要智力刺激和思想实验的自由。它们讨厌墨守成规和思维僵化，新颖的挑战、开放的问题、辩论的机会是它们活力的源泉。与ENTP兔相处要尊重它们的批判思维，提供概念性的谜题，允许它们挑战现有的规则。它们享受智力较量和思想碰撞的快乐，权威的压制会激起强烈的反抗。与其他宠物相处时，ENTP兔是思维的挑衅者和概念的传播者。它们会质疑群体中的固化思维，提出另类的行为方案，传播新奇的思想观念。多兔家庭中，ENTP兔往往是首席创新官，它们提出的改革方案往往能带来生活质量的显著提升。ENTP兔对人类的感情通过智力共享来表达——与你进行思想辩论，分享它们的创新发现，邀请你参与它们的概念探险。",
+                    balanceSteps: [
+                        "提供思维挑战：开放性的问题和概念谜题",
+                        "尊重批判精神：允许质疑和挑战现有规则",
+                        "认可创新贡献：重视它们提出的改进方案",
+                        "支持思想实验：提供安全的概念探索空间"
+                    ],
+                    warmConclusion: "你的ENTP兔用永不满足的好奇心挑战着现实的边界，它可能不像其他兔子那样安于现状，但它为你带来的每个创新想法都是最活力的礼物。当它用锐利的目光审视每个传统，当它用敏捷的思维突破每个限制，当它用整个生命在探索自由的可能性，你会明白，最珍贵的爱就是激发所爱之人思维的无限潜能。",
+                    warmConclusionTitle: "致ENTP兔的主人"
+                },
+                
+                enfp: {
+                    name: "ENFP - 竞选者兔",
+                    color: "#96CEB4",
+                    imageUrl: "https://placehold.co/300x300/96CEB4/FFFFFF?text=ENFP兔",
+                    analysis: "你的ENFP兔是笼舍中的梦想家和灵感源泉，它们用无限的热情和丰富的想象力为生活注入魔力与可能性。ENFP兔是典型的外向(E)型人格，它们从社交互动和灵感分享中获得能量，擅长看到每个生命的内在潜能和每个时刻的魔法维度。一个害羞的同伴、一个普通的玩具、一个平凡的日子，在ENFP兔眼中都蕴含着非凡的可能性和独特的故事。它们是敏锐的直觉(N)型感知者，能够透过表面看到深层的潜力和象征意义——那个安静的同伴内心藏着舞者的灵魂，那个旧玩具可以成为冒险的飞船，这个雨天是举办室内派对的好时机。ENFP兔的世界是由无限的可能性和深层的情感连接构成的：'这个时刻能创造怎样的美好记忆？''那个想法能激发多少欢乐？''这个连接能带来怎样的成长？'。ENFP兔是典型的情感(F)型决策者，它们的行为基于对潜能实现的热情和对情感真实的追求：'分享这个灵感能点亮谁的心灵？''组织这个活动能释放多少快乐？''表达这个情感能加深我们的连接吗？'在灵感实现上，ENFP兔呈现出感知(P)型的自发性。它们随时准备拥抱新的灵感，改变原有计划，探索意外机会，讨厌被预期束缚。ENFP兔是天然的梦想导演，它们会策划即兴的派对，发明象征性的游戏，组织充满仪式感的社交活动。",
+                    interaction: "ENFP兔需要灵感表达和情感分享的自由。它们讨厌机械的重复和情感的压抑，真诚的交流、创意的空间、热情的回应是它们生命的养分。与ENFP兔相处要成为它们灵感的共鸣板，欣赏它们独特的视角，参与它们策划的魔法时刻。它们享受共享灵感火花的情感高潮，冷漠或否定会让它们的心灵枯萎。与其他宠物相处时，ENFP兔是潜能的发掘者和快乐的传播者。它们会看到每个同伴内在的光芒，策划能释放这种光芒的活动，传播积极的情感能量。多兔家庭中，ENFP兔往往是灵魂鼓舞者，它们用热情点燃每个生命的内在火焰。ENFP兔对人类的感情通过灵感礼物来表达——与你分享它们看到的魔法维度，为你策划充满惊喜的时刻，用整个存在提醒你生命的美好与无限可能。",
+                    balanceSteps: [
+                        "提供灵感舞台：设置创意表达的空间",
+                        "共享魔法时刻：积极参与它们策划的活动",
+                        "认可独特视角：欣赏它们特别的世界观",
+                        "支持梦想计划：帮助实现它们的美好愿景"
+                    ],
+                    warmConclusion: "你的ENFP兔用永不枯竭的灵感涂抹着现实的画布，它可能不像其他兔子那样脚踏实地，但它为你带来的每个魔法时刻都是最纯真的馈赠。当它为你揭示平凡的奇迹，当它为你策划惊喜的派对，当它用整个生命在歌颂存在的欢乐，你会明白，最动人的爱就是与所爱之人共享对生命无限可能性的信仰。",
+                    warmConclusionTitle: "致ENFP兔的主人"
+                }
+            }
+        };
+
+        // === 页面状态管理 ===
+        let currentQuestionIndex = 0;
+        let selectedPet = "";
+        let userAnswers = [];
+        
+        // === 初始化函数 ===
+        function init() {
+            createStars();
+            
+            // 绑定事件
+            document.getElementById('startTest').addEventListener('click', startTest);
+            document.getElementById('prevQuestion').addEventListener('click', prevQuestion);
+            document.getElementById('backToPetSelection').addEventListener('click', backToPetSelection);
+            document.getElementById('restartTest').addEventListener('click', restartTest);
+            
+            // 宠物选择事件
+            document.querySelectorAll('.pet-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.pet-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    selectedPet = this.getAttribute('data-pet');
+                });
+            });
+            
+            // 默认选择狗狗
+            document.querySelector('.pet-option[data-pet="dog"]').classList.add('active');
+            selectedPet = "dog";
+        }
+        
+        // 开始测试
+        function startTest() {
+            if (!selectedPet) {
+                alert("请先选择宠物类型");
+                return;
+            }
+            
+            // 重置状态
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            
+            // 更新测试标题
+            const petNames = {
+                dog: "狗狗专属MBTI测试",
+                hamster: "仓鼠专属MBTI测试", 
+                bird: "鸟类专属MBTI测试",
+                snake: "蛇蛇专属MBTI测试",
+                cat: "猫猫专属MBTI测试",
+                rabbit: "兔兔专属MBTI测试"
+            };
+            document.getElementById('quizTitle').textContent = petNames[selectedPet];
+            
+            // 切换到测试页
+            document.getElementById('petSelectionPage').classList.remove('active');
+            document.getElementById('quizPage').classList.add('active');
+            
+            // 显示第一题
+            displayQuestion(currentQuestionIndex);
+        }
+        
+        // 返回选择宠物页面
+        function backToPetSelection() {
+            // 切换到选择页
+            document.getElementById('quizPage').classList.remove('active');
+            document.getElementById('petSelectionPage').classList.add('active');
+        }
+        
+        // 显示题目
+        function displayQuestion(index) {
+            const questionBank = petQuestionBanks[selectedPet];
+            const question = questionBank[index];
+            
+            document.getElementById('questionText').textContent = question.text;
+            
+            // 更新进度
+            const progress = ((index + 1) / questionBank.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            document.getElementById('progressText').textContent = `${index + 1}/${questionBank.length}`;
+            document.getElementById('currentQuestion').textContent = index + 1;
+            
+            // 生成选项
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, i) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option-item';
+                if (userAnswers[index] === i) {
+                    optionElement.classList.add('selected');
+                }
+                optionElement.textContent = option;
+                
+                optionElement.addEventListener('click', function() {
+                    // 选中当前选项
+                    userAnswers[index] = i;
+                    
+                    // 更新UI
+                    document.querySelectorAll('.option-item').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    // 自动跳转到下一题
+                    setTimeout(() => {
+                        nextQuestion();
+                    }, 500);
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // 更新上一题按钮状态
+            document.getElementById('prevQuestion').style.visibility = index > 0 ? 'visible' : 'hidden';
+        }
+        
+        // 下一题
+        function nextQuestion() {
+            if (userAnswers[currentQuestionIndex] === undefined) {
+                return; // 未选择选项时不执行任何操作
+            }
+            
+            currentQuestionIndex++;
+            const questionBank = petQuestionBanks[selectedPet];
+            
+            if (currentQuestionIndex >= questionBank.length) {
+                showResults();
+            } else {
+                displayQuestion(currentQuestionIndex);
+            }
+        }
+        
+        // 上一题
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion(currentQuestionIndex);
+            }
+        }
+        
+        // 计算MBTI类型
+        function calculateMbtiType(petType, answers) {
+            // 初始化MBTI维度得分
+            const dimensions = {
+                E_I: { E: 0, I: 0 },
+                S_N: { S: 0, N: 0 },
+                T_F: { T: 0, F: 0 },
+                J_P: { J: 0, P: 0 }
+            };
+            
+            // 获取该宠物的评分系统
+            const scoringSystem = petScoringSystems[petType];
+            
+            // 计算每个维度的得分
+            answers.forEach((answerIndex, questionIndex) => {
+                if (answerIndex !== undefined && scoringSystem[questionIndex]) {
+                    const questionScores = scoringSystem[questionIndex];
+                    const optionLetter = String.fromCharCode(65 + answerIndex); // 0->A, 1->B, 2->C
+                    const dimension = questionScores.dimension;
+                    const scoreValue = questionScores.scores[optionLetter];
+                    
+                    if (scoreValue && dimensions[dimension]) {
+                        dimensions[dimension][scoreValue]++;
+                    }
+                }
+            });
+            
+            // 确定每个维度的类型
+            const mbtiType = 
+                (dimensions.E_I.E >= dimensions.E_I.I ? "E" : "I") +
+                (dimensions.S_N.S >= dimensions.S_N.N ? "S" : "N") +
+                (dimensions.T_F.T >= dimensions.T_F.F ? "T" : "F") +
+                (dimensions.J_P.J >= dimensions.J_P.P ? "J" : "P");
+            
+            return mbtiType;
+        }
+        
+        // 智能映射函数 - 找到最相似的MBTI结果
+        function findClosestMbtiResult(petType, targetMbti) {
+            const availableTypes = Object.keys(petMbtiTypes[petType]);
+            const targetType = targetMbti.toLowerCase();
+            
+            // 如果目标类型完全匹配，直接返回
+            if (availableTypes.includes(targetType)) {
+                return petMbtiTypes[petType][targetType];
+            }
+            
+            // 计算相似度分数
+            let bestMatch = availableTypes[0];
+            let bestScore = -1;
+            
+            availableTypes.forEach(availableType => {
+                let score = 0;
+                
+                // 比较每个维度
+                for (let i = 0; i < 4; i++) {
+                    if (targetType[i] === availableType[i]) {
+                        score += 1; // 相同维度得1分
+                    }
+                }
+                
+                // 额外加分规则：E/I维度最重要
+                if (targetType[0] === availableType[0]) {
+                    score += 2;
+                }
+                
+                // 额外加分规则：J/P维度次重要
+                if (targetType[3] === availableType[3]) {
+                    score += 1.5;
+                }
+                
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMatch = availableType;
+                }
+            });
+            
+            console.log(`映射: ${targetMbti} -> ${bestMatch} (相似度: ${bestScore})`);
+            return petMbtiTypes[petType][bestMatch];
+        }
+        
+        // 显示结果
+        function showResults() {
+            // 根据答案计算MBTI类型
+            const mbtiType = calculateMbtiType(selectedPet, userAnswers);
+            
+            // 获取对应的结果
+            let result = null;
+            if (petMbtiTypes[selectedPet] && petMbtiTypes[selectedPet][mbtiType.toLowerCase()]) {
+                result = petMbtiTypes[selectedPet][mbtiType.toLowerCase()];
+            } else {
+                // 如果没有精确匹配，使用智能映射找到最相似的类型
+                result = findClosestMbtiResult(selectedPet, mbtiType);
+            }
+            
+            // 更新结果标题
+            const resultTitles = {
+                dog: "你的狗狗MBTI性格分析",
+                hamster: "你的仓鼠MBTI性格分析",
+                bird: "你的鸟类MBTI性格分析", 
+                snake: "你的蛇蛇MBTI性格分析",
+                cat: "你的猫猫MBTI性格分析",
+                rabbit: "你的兔兔MBTI性格分析"
+            };
+            document.getElementById('resultTitle').textContent = resultTitles[selectedPet];
+            
+            // 更新结果
+            document.getElementById('petMbtiType').textContent = result.name;
+            document.getElementById('petResultImg').src = result.imageUrl;
+            document.getElementById('petResultName').textContent = result.name;
+            document.getElementById('petResultName').className = `result-name ${selectedPet}-color`;
+            document.getElementById('petResultName').style.color = result.color;
+            document.getElementById('petResultAnalysis').textContent = result.analysis;
+            document.getElementById('petInteraction').textContent = result.interaction;
+            document.getElementById('warmConclusion').textContent = result.warmConclusion;
+            document.getElementById('warmConclusionTitle').textContent = result.warmConclusionTitle;
+            
+            // 更新平衡指南
+            const balanceGuideContainer = document.getElementById('balanceGuide');
+            balanceGuideContainer.innerHTML = '';
+            
+            result.balanceSteps.forEach((step, index) => {
+                const stepElement = document.createElement('div');
+                stepElement.className = 'guide-step';
+                stepElement.innerHTML = `
+                    <div class="step-number">${index + 1}</div>
+                    <p>${step}</p>
+                `;
+                balanceGuideContainer.appendChild(stepElement);
+            });
+            
+            // 生成唯一的ID
+            const trackId = 'ST-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            document.getElementById('starTrackId').innerHTML = `<a href="https://xhslink.com/m/1HpWUO6Yhkn" target="_blank" style="color: var(--accent-color); text-decoration: underline;">${trackId}</a>`;
+            
+            // 切换到结果页
+            document.getElementById('quizPage').classList.remove('active');
+            document.getElementById('resultPage').classList.add('active');
+        }
+        
+        // 重新测试
+        function restartTest() {
+            // 重置状态
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            
+            // 切换到选择页
+            document.getElementById('resultPage').classList.remove('active');
+            document.getElementById('petSelectionPage').classList.add('active');
+        }
+        
+        // 初始化应用
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
